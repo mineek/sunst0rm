@@ -144,7 +144,7 @@ def prep_restore(ipsw, blob, board, kpp):
         # exit
         sys.exit(0)
 
-def prep_boot(ipsw, blob, board, kpp, identifier):
+def prep_boot(ipsw, blob, board, kpp, identifier, legacy):
     # create a working directory
     print('[*] Creating Working Directory')
     subprocess.run(['/bin/mkdir', './work'])
@@ -186,14 +186,18 @@ def prep_boot(ipsw, blob, board, kpp, identifier):
     # get the names of the devicetree and trustcache
     print('[*] Getting Device Tree and TrustCache')
     # read manifest from ./work/BuildManifest.plist
-    trustcache = manifest.get_comp(board, 'StaticTrustCache')
-    devicetree = manifest.get_comp(board, 'DeviceTree')
+    if legacy:
+        devicetree = manifest.get_comp(board, 'DeviceTree')
+    else:
+        trustcache = manifest.get_comp(board, 'StaticTrustCache')
+        devicetree = manifest.get_comp(board, 'DeviceTree')
     # sign them like this  img4 -i devicetree -o devicetree.img4 -M IM4M -T rdtr
     print('[*] Signing Device Tree')
     subprocess.run(['/usr/local/bin/img4', '-i', './work/' + devicetree, '-o', './work/devicetree.img4', '-M', 'IM4M', '-T', 'rdtr'])
     # sign them like this   img4 -i trustcache -o trustcache.img4 -M IM4M -T rtsc
     print('[*] Signing Trust Cache')
-    subprocess.run(['/usr/local/bin/img4', '-i', './work/' + trustcache, '-o', './work/trustcache.img4', '-M', 'IM4M', '-T', 'rtsc'])
+    if not legacy:
+        subprocess.run(['/usr/local/bin/img4', '-i', './work/' + trustcache, '-o', './work/trustcache.img4', '-M', 'IM4M', '-T', 'rtsc'])
     # grab kernelcache from manifest
     print('[*] Getting Kernel Cache')
     kernelcache = manifest.get_comp(board, 'KernelCache')
@@ -222,7 +226,8 @@ def prep_boot(ipsw, blob, board, kpp, identifier):
     print('[*] Copying files to boot directory')
     subprocess.run(['cp', './work/ibss.img4', './boot/ibss.img4'])
     subprocess.run(['cp', './work/ibec.img4', './boot/ibec.img4'])
-    subprocess.run(['cp', './work/trustcache.img4', './boot/trustcache.img4'])
+    if not legacy:
+        subprocess.run(['cp', './work/trustcache.img4', './boot/trustcache.img4'])
     subprocess.run(['cp', './work/devicetree.img4', './boot/devicetree.img4'])
     subprocess.run(['cp', './work/krnlboot.img4', './boot/krnlboot.img4'])
     # clean up
@@ -245,6 +250,7 @@ def main():
     parser.add_argument('-d', '--device', help='Board to use', required=True)
     parser.add_argument('-kpp', '--kpp', help='Use KPP', required=False)
     parser.add_argument('-id', '--identifier', help='Identifier to use', required=False)
+    parser.add_argument('--legacy', help='Use Legacy Mode (ios 11 or lower)', required=False)
     args = parser.parse_args()
     if args.restore:
         prep_restore(args.ipsw, args.blob, args.device, args.kpp)
@@ -252,7 +258,7 @@ def main():
         if args.identifier == None:
             print('[!] You need to specify an identifier')
             sys.exit(0)
-        prep_boot(args.ipsw, args.blob, args.device, args.kpp, args.identifier)
+        prep_boot(args.ipsw, args.blob, args.device, args.kpp, args.identifier, args.legacy)
     else:
         print('[!] Please specify a mode')
         sys.exit(0)
