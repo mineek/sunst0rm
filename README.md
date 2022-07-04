@@ -1,6 +1,20 @@
 # sunst0rm
 iOS Tether Downgrader
 
+# REQUIREMENTS:
+- irecovery
+- futurerestore
+- pyimg4 (pip3 install pyimg4) (**MAKE SURE YOU UPDATED PYTHON AND NOT USING THE BUNDLED ONE!**)
+- iBoot64patcher (https://github.com/Cryptiiiic/iBoot64Patcher)
+- Kernel64patcher (https://github.com/iSuns9/Kernel64Patcher)
+- img4tool (https://github.com/tihmstar/img4tool)
+- img4 (https://github.com/xerub/img4lib)
+- ldid (https://github.com/ProcursusTeam/ldid)
+- restored_external64_patcher (https://github.com/iSuns9/restored_external64patcher)
+- asr64_patcher (https://github.com/exploit3dguy/asr64_patcher)
+
+**Make sure to use the forks listed above.**
+
 ## how to use?
 ### Restoring
 python3 restore.py -i ipsw.ipsw -t shsh.shsh2 -r true -d DEVICEBOARD ( use --kpp true if you have kpp, otherwise dont add --kpp )
