@@ -31,9 +31,6 @@ def dependencies():
     if not os.path.exists('/usr/local/bin/asr64_patcher'):
         print('[!] asr64_patcher not found, please install it')
         sys.exit(1)
-    if not os.path.exists('/usr/local/bin/pyimg4'):
-        print('[!] pyimg4 not found, please install it')
-        sys.exit(1)
     if not os.path.exists('/usr/local/bin/restored_external64_patcher'):
         print('[!] restored_external64_patcher not found, please install it')
         sys.exit(1)
