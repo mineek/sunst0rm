@@ -5,7 +5,7 @@ iOS Tether Downgrader for checkm8 devices
 
 # REQUIREMENTS:
 - irecovery
-- futurerestore
+- futurerestore ( NIGHTLY BUILD! )
 - pyimg4 (pip3 install pyimg4) (**MAKE SURE YOU UPDATED PYTHON AND NOT USING THE BUNDLED ONE!**)
 - iBoot64patcher (https://github.com/Cryptiiiic/iBoot64Patcher)
 - Kernel64patcher (https://github.com/iSuns9/Kernel64Patcher)
