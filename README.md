@@ -23,3 +23,6 @@ python3 sunstorm.py -i ipsw.ipsw -t shsh.shsh2 -r true -d DEVICEBOARD ( use --kp
 python3 sunstorm.py -i ipsw.ipsw -t shsh.shsh2 -b true -d DEVICEBOARD ( use --kpp true if you have kpp, otherwise dont add --kpp ) -id IDENTIFIER
 
 ./boot.sh
+
+# CREDITS:
+[M1n1Exploit](https://github.com/Mini-Exploit) - Some code from ra1nstorm
