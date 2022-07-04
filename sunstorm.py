@@ -244,24 +244,24 @@ def main():
     parser.add_argument('-t', '--blob', help='Blob to use', required=True)
     parser.add_argument('-r', '--restore', help='Restore Mode', required=False)
     parser.add_argument('-b', '--boot', help='Boot Mode', required=False)
-    parser.add_argument('-d', '--device', help='Board to use', required=True)
+    parser.add_argument('-d', '--boardconfig', help='BoardConfig to use', required=True)
     parser.add_argument('-kpp', '--kpp', help='Use KPP', required=False)
     parser.add_argument('-id', '--identifier', help='Identifier to use', required=False)
     parser.add_argument('--legacy', help='Use Legacy Mode (ios 11 or lower)', required=False)
     args = parser.parse_args()
     if args.restore:
-        prep_restore(args.ipsw, args.blob, args.device, args.kpp)
+        prep_restore(args.ipsw, args.blob, args.boardconfig, args.kpp)
     elif args.boot:
         if args.identifier == None:
             print('[!] You need to specify an identifier')
             sys.exit(0)
-        prep_boot(args.ipsw, args.blob, args.device, args.kpp, args.identifier, args.legacy)
+        prep_boot(args.ipsw, args.blob, args.boardconfig, args.kpp, args.identifier, args.legacy)
     else:
         print('[!] Please specify a mode')
         sys.exit(0)
 
 if __name__ == '__main__':
-    print("IOS Tether Restore")
+    print("sunst0rm")
     print("Made by mineek")
     print("Some code by m1n1exploit")
     main()
