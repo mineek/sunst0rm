@@ -1,5 +1,5 @@
 # sunst0rm
-iOS Tether Downgrader
+iOS Tether Downgrader for checkm8 devices
 
 # REQUIREMENTS:
 - irecovery
