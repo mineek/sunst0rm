@@ -261,7 +261,7 @@ def main():
         sys.exit(0)
 
 if __name__ == '__main__':
-    print("IOS Tether Restore")
+    print("sunst0rm")
     print("Made by mineek")
     print("Some code by m1n1exploit")
     main()
