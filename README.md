@@ -21,4 +21,5 @@ python3 sunstorm.py -i ipsw.ipsw -t shsh.shsh2 -r true -d DEVICEBOARD ( use --kp
 
 ### booting
 python3 sunstorm.py -i ipsw.ipsw -t shsh.shsh2 -b true -d DEVICEBOARD ( use --kpp true if you have kpp, otherwise dont add --kpp ) -id IDENTIFIER
+
 ./boot.sh
