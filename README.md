@@ -3,6 +3,8 @@ iOS Tether Downgrader for checkm8 devices
 
 ## Note: Make sure to use the dependencies listed below, the automatic checker is not finished yet!
 
+## FOR HELP JOIN: https://discord.gg/TqVH6NBwS3
+
 # REQUIREMENTS:
 - irecovery
 - futurerestore ( NIGHTLY BUILD! )
