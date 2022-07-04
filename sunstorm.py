@@ -244,7 +244,7 @@ def main():
     parser.add_argument('-t', '--blob', help='Blob to use', required=True)
     parser.add_argument('-r', '--restore', help='Restore Mode', required=False)
     parser.add_argument('-b', '--boot', help='Boot Mode', required=False)
-    parser.add_argument('-d', '--device', help='Board to use', required=True)
+    parser.add_argument('-d', '--boardconfig', help='BoardConfig to use', required=True)
     parser.add_argument('-kpp', '--kpp', help='Use KPP', required=False)
     parser.add_argument('-id', '--identifier', help='Identifier to use', required=False)
     parser.add_argument('--legacy', help='Use Legacy Mode (ios 11 or lower)', required=False)
