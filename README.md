@@ -1,6 +1,8 @@
 # sunst0rm
 iOS Tether Downgrader for checkm8 devices
 
+## Note: Make sure to use the dependencies listed below, the automatic checker is not finished yet!
+
 # REQUIREMENTS:
 - irecovery
 - futurerestore
