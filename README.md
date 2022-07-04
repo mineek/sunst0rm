@@ -19,10 +19,10 @@ iOS Tether Downgrader for checkm8 devices
 
 ## how to use?
 ### Restoring
-python3 sunstorm.py -i ipsw.ipsw -t shsh.shsh2 -r true -d DEVICEBOARD ( use --kpp true if you have kpp, otherwise dont add --kpp )
+python3 sunstorm.py -i ipsw.ipsw -t shsh.shsh2 -r true --boardconfig DEVICEBOARD ( use --kpp true if you have kpp, otherwise dont add --kpp )
 
 ### booting
-python3 sunstorm.py -i ipsw.ipsw -t shsh.shsh2 -b true -d DEVICEBOARD ( use --kpp true if you have kpp, otherwise dont add --kpp ) -id IDENTIFIER
+python3 sunstorm.py -i ipsw.ipsw -t shsh.shsh2 -b true --boardconfig DEVICEBOARD ( use --kpp true if you have kpp, otherwise dont add --kpp ) -id IDENTIFIER
 
 ./boot.sh
 
