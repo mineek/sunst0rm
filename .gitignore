@@ -1,5 +1,6 @@
 IM4M
-iPhone*
+*.ipsw
+*.dmg
 *.shsh2
 __pycache__
 boot
