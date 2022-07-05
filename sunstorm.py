@@ -173,7 +173,7 @@ def prep_boot(ipsw, blob, board, kpp, identifier, legacy):
     subprocess.run(['/usr/local/bin/iBoot64Patcher', './work/ibss.dmg', './work/ibss.patched'])
     # patch ibec like this:  iBoot64Patcher ibec.dmg ibec.patched -b "-v"
     print('[*] Patching IBEC')
-    subprocess.run(['/usr/local/bin/iBoot64Patcher', './work/ibec.dmg', './work/ibec.patched', '-b', '"-v"'])
+    subprocess.run(['/usr/local/bin/iBoot64Patcher', './work/ibec.dmg', './work/ibec.patched', '-b', '-v'])
     # convert blob into im4m like this: img4tool -e -s blob -m IM4M
     print('[*] Converting BLOB to IM4M')
     subprocess.run(['/usr/local/bin/img4tool', '-e', '-s', blob, '-m', 'IM4M'])
