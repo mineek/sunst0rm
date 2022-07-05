@@ -33,7 +33,7 @@ Based on [my guide](https://github.com/mineek/iostethereddowngrade)
 | `-d BOARDCONFIG`| `--boardconfig BOARDCONFIG` | BoardConfig to use  (E.g: `d221ap`)      |
 | `-kpp true`     | `--kpp true`                | Use KPP (A9 or lower)                    |
 | `-id IDENTIFIER`| `--identifier IDENTIFIER`   | Identifier to use  (E.g: `iPhone10,6`)   |
-|                 | `--legacy`                  | Use Legacy Mode (iOS 11 or lower)        |
+|                 | `--legacy true`                  | Use Legacy Mode (iOS 11 or lower)        |
 ### Restoring
 ```py
 python3 sunstorm.py -i 'IPSW' -t 'SHSH2' -r true -d 'BOARDCONFIG'
