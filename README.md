@@ -28,7 +28,7 @@ iOS Tether Downgrader for checkm8 devices
 | `-t SHSH2`      | `--blob SHSH2`              | Path to SHSH2                            |
 | `-r true`       | `--restore true`            | Restore mode                             |
 | `-b true`       | `--boot true`               | Boot mode                                |
-| `-d BOARDCONFIG`| `--boardconfig BOARDCONFIG` | BoardConfig to use  (E.g: `D221AP`)      |
+| `-d BOARDCONFIG`| `--boardconfig BOARDCONFIG` | BoardConfig to use  (E.g: `d221ap`)      |
 | `-kpp true`     | `--kpp true`                | Use KPP (A9 or lower)                    |
 | `-id IDENTIFIER`| `--identifier IDENTIFIER`   | Identifier to use  (E.g: `iPhone10,6`)   |
 |                 | `--legacy`                  | Use Legacy Mode (iOS 11 or lower)        |
