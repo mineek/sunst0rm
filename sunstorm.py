@@ -11,7 +11,7 @@ def dependencies():
     import sys
     import subprocess
     if not os.path.exists('/usr/local/bin/futurerestore'):
-        print('[!] idevicerestore not found, please install it')
+        print('[!] futurerestore not found, please install it')
         sys.exit(1)
     if not os.path.exists('/usr/local/bin/img4tool'):
         print('[!] img4tool not found, please install it')
