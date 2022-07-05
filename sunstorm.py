@@ -122,10 +122,6 @@ def prep_restore(ipsw, blob, board, kpp, legacy):
         if input() == 'y':
             # restore the device using futurestore like this: futurerestore -t blob --use-pwndfu --skip-blob --rdsk ramdisk.im4p --rkrn krnl.im4p --latest-sep --latest-baseband ipsw.ipsw
             print('[*] Restoring Device')
-            if legacy:
-                # send dummy ibss using irecovery
-                print('[*] Sending Dummy IBSS')
-                subprocess.run(['/usr/local/bin/irecovery', '-f', '/dev/null'])
             subprocess.run(['/usr/local/bin/futurerestore', '-t', blob, '--use-pwndfu', '--skip-blob', '--rdsk', './work/ramdisk.im4p', '--rkrn', './work/krnl.im4p', '--latest-sep', '--latest-baseband', ipsw])
             # exit
             print('[*] Done!')
