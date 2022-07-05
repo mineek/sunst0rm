@@ -36,7 +36,7 @@ def dependencies():
         sys.exit(1)
     
 
-def prep_restore(ipsw, blob, board, kpp):
+def prep_restore(ipsw, blob, board, kpp, legacy):
     # extract the IPSW to the ./work directory
     print('[*] Extracting IPSW')
     with zipfile.ZipFile(ipsw, 'r') as z:
@@ -70,22 +70,25 @@ def prep_restore(ipsw, blob, board, kpp):
     # copy the patched asr back to the ramdisk
     print('[*] Copying Patched ASR back to the RamDisk')
     subprocess.run(['/bin/cp', './work/patched_asr', './work/ramdisk/usr/sbin/asr'])
-    # patch restored_external 
-    print('[*] Patching Restored External')
-    subprocess.run(['/usr/local/bin/restored_external64_patcher' ,'./work/ramdisk/usr/local/bin/restored_external' ,'./work/restored_external_patched'])
-    # resign it using ldid
-    print('[*] Extracting Restored External Ents')
-    with open('./work/restored_external.plist', 'wb') as f:
-        subprocess.run(['/usr/local/bin/ldid', '-e', './work/ramdisk/usr/local/bin/restored_external'], stdout=f)
-    # resign it using ldid
-    print('[*] Resigning Restored External')
-    subprocess.run(['/usr/local/bin/ldid', '-S./work/restored_external.plist', './work/restored_external_patched'])
-    # chmod 755 the new restored_external
-    print('[*] Chmoding Restored External')
-    subprocess.run(['/bin/chmod', '-R', '755', './work/restored_external_patched'])
-    # copy the patched restored_external back to the ramdisk
-    print('[*] Copying Patched Restored External back to the RamDisk')
-    subprocess.run(['/bin/cp', './work/restored_external_patched', './work/ramdisk/usr/local/bin/restored_external'])
+    if not legacy:
+        # patch restored_external 
+        print('[*] Patching Restored External')
+        subprocess.run(['/usr/local/bin/restored_external64_patcher' ,'./work/ramdisk/usr/local/bin/restored_external' ,'./work/restored_external_patched'])
+        #resign it using ldid
+        print('[*] Extracting Restored External Ents')
+        with open('./work/restored_external.plist', 'wb') as f:
+            subprocess.run(['/usr/local/bin/ldid', '-e', './work/ramdisk/usr/local/bin/restored_external'], stdout=f)
+        # resign it using ldid
+        print('[*] Resigning Restored External')
+        subprocess.run(['/usr/local/bin/ldid', '-S./work/restored_external.plist', './work/restored_external_patched'])
+        # chmod 755 the new restored_external
+        print('[*] Chmoding Restored External')
+        subprocess.run(['/bin/chmod', '-R', '755', './work/restored_external_patched'])
+        # copy the patched restored_external back to the ramdisk
+        print('[*] Copying Patched Restored External back to the RamDisk')
+        subprocess.run(['/bin/cp', './work/restored_external_patched', './work/ramdisk/usr/local/bin/restored_external'])
+    else:
+        print('[*] Legacy mode, skipping restored_external')
     # detach the ramdisk
     print('[*] Detaching RamDisk')
     subprocess.run(['/usr/bin/hdiutil', 'detach', './work/ramdisk'])
@@ -119,6 +122,10 @@ def prep_restore(ipsw, blob, board, kpp):
         if input() == 'y':
             # restore the device using futurestore like this: futurerestore -t blob --use-pwndfu --skip-blob --rdsk ramdisk.im4p --rkrn krnl.im4p --latest-sep --latest-baseband ipsw.ipsw
             print('[*] Restoring Device')
+            if legacy:
+                # send dummy ibss using irecovery
+                print('[*] Sending Dummy IBSS')
+                subprocess.run(['/usr/local/bin/irecovery', '-f', '/dev/null'])
             subprocess.run(['/usr/local/bin/futurerestore', '-t', blob, '--use-pwndfu', '--skip-blob', '--rdsk', './work/ramdisk.im4p', '--rkrn', './work/krnl.im4p', '--latest-sep', '--latest-baseband', ipsw])
             # exit
             print('[*] Done!')
@@ -250,7 +257,7 @@ def main():
     parser.add_argument('--legacy', help='Use Legacy Mode (ios 11 or lower)', required=False)
     args = parser.parse_args()
     if args.restore:
-        prep_restore(args.ipsw, args.blob, args.boardconfig, args.kpp)
+        prep_restore(args.ipsw, args.blob, args.boardconfig, args.kpp, args.legacy)
     elif args.boot:
         if args.identifier == None:
             print('[!] You need to specify an identifier')
