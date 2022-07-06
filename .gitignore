@@ -2,5 +2,6 @@ IM4M
 *.ipsw
 *.dmg
 *.shsh2
+.DS_Store
 __pycache__
 boot
