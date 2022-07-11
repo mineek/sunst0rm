@@ -36,7 +36,7 @@ def dependencies():
         sys.exit(1)
     
 
-def prep_restore(ipsw, blob, board, kpp, legacy):
+def prep_restore(ipsw, blob, board, kpp, legacy, skip_baseband):
     # extract the IPSW to the ./work directory
     print('[*] Extracting IPSW')
     with zipfile.ZipFile(ipsw, 'r') as z:
@@ -122,7 +122,10 @@ def prep_restore(ipsw, blob, board, kpp, legacy):
         if input() == 'y':
             # restore the device using futurestore like this: futurerestore -t blob --use-pwndfu --skip-blob --rdsk ramdisk.im4p --rkrn krnl.im4p --latest-sep --latest-baseband ipsw.ipsw
             print('[*] Restoring Device')
-            subprocess.run(['/usr/local/bin/futurerestore', '-t', blob, '--use-pwndfu', '--skip-blob', '--rdsk', './work/ramdisk.im4p', '--rkrn', './work/krnl.im4p', '--latest-sep', '--latest-baseband', ipsw])
+            if skip_baseband:
+                subprocess.run(['/usr/local/bin/futurerestore', '-t', blob, '--use-pwndfu', '--skip-blob', '--rdsk', './work/ramdisk.im4p', '--rkrn', './work/krnl.im4p', '--latest-sep', '--no-baseband', ipsw])
+            else:
+                subprocess.run(['/usr/local/bin/futurerestore', '-t', blob, '--use-pwndfu', '--skip-blob', '--rdsk', './work/ramdisk.im4p', '--rkrn', './work/krnl.im4p', '--latest-sep', '--latest-baseband', ipsw])
             # exit
             print('[*] Done!')
             # clean
@@ -134,7 +137,10 @@ def prep_restore(ipsw, blob, board, kpp, legacy):
             # dont restore device but tell user to enter pwndfu
             print('[!] You need to enter pwndfu')
             # tell the user how they can restore the device later
-            print('[!] You can restore the device later using futurestore like this: futurerestore -t blob --use-pwndfu --skip-blob --rdsk ./work/ramdisk.im4p --rkrn ./work/krnl.im4p --latest-sep --latest-baseband ipsw.ipsw')
+            if skip_baseband:
+                print('[!] You can restore the device later using futurestore like this: futurerestore -t blob --use-pwndfu --skip-blob --rdsk ./work/ramdisk.im4p --rkrn ./work/krnl.im4p --latest-sep --no-baseband ipsw.ipsw')
+            else:
+                print('[!] You can restore the device later using futurestore like this: futurerestore -t blob --use-pwndfu --skip-blob --rdsk ./work/ramdisk.im4p --rkrn ./work/krnl.im4p --latest-sep --latest-baseband ipsw.ipsw')
             # exit
             sys.exit(0)
     else:
@@ -251,9 +257,10 @@ def main():
     parser.add_argument('-kpp', '--kpp', help='Use KPP', required=False)
     parser.add_argument('-id', '--identifier', help='Identifier to use', required=False)
     parser.add_argument('--legacy', help='Use Legacy Mode (ios 11 or lower)', required=False)
+    parser.add_argument('--skip-baseband', help='Skip Baseband', required=False)
     args = parser.parse_args()
     if args.restore:
-        prep_restore(args.ipsw, args.blob, args.boardconfig, args.kpp, args.legacy)
+        prep_restore(args.ipsw, args.blob, args.boardconfig, args.kpp, args.legacy, args.skip_baseband)
     elif args.boot:
         if args.identifier == None:
             print('[!] You need to specify an identifier')
