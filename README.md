@@ -14,7 +14,7 @@ Based on [my guide](https://github.com/mineek/iostethereddowngrade)
 - [img4tool](https://github.com/tihmstar/img4tool)
 - [img4](https://github.com/xerub/img4lib)
 - [ldid](https://github.com/ProcursusTeam/ldid)
-- [restored_external64_patcher (fork)](https://github.com/iSuns9/restored_external64patcher)
+- [restored_external64_patcher](https://github.com/iSuns9/restored_external64patcher)
 - [asr64_patcher](https://github.com/exploit3dguy/asr64_patcher)
 - [Python3](https://www.python.org/downloads)
    - Make sure you updated Python and are not using the bundled one in macOS
