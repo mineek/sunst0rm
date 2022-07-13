@@ -40,7 +40,7 @@ Based on [my guide](https://github.com/mineek/iostethereddowngrade)
 | `-kpp true`     | `--kpp true`                | Use KPP (A9 or lower)                    |
 | `-id IDENTIFIER`| `--identifier IDENTIFIER`   | Identifier to use  (E.g: `iPhone10,6`)   |
 |                 | `--legacy true`             | Use Legacy Mode (iOS 11 or lower)        |
-|                 | `--skip-baseband`           | Skip Baseband sending                    |
+|                 | `--skip-baseband`           | Skip Baseband sending, do NOT do this if your device does have baseband this argument is only ment to be passed when your device does *not* have baseband such as WiFi only iPads.                  |
 ### Restoring
 ```py
 python3 sunstorm.py -i 'IPSW' -t 'SHSH2' -r true -d 'BOARDCONFIG'
