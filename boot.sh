@@ -1,3 +1,8 @@
+echo 'Ensure device is in pwnDFU mode with sigchecks removed.'
+sleep 5
+
+irecovery -f boot/iBSS.img4
+# send iBSS again.
 irecovery -f boot/iBSS.img4
 irecovery -f boot/iBEC.img4
 irecovery -f boot/devicetree.img4
