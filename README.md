@@ -9,11 +9,10 @@ Based on [my guide](https://github.com/mineek/iostethereddowngrade)
 - It is a *tethered* downgrade meaning you will have to boot tethered every single time from your PC if your battery dies or if you reboot your phone.
 - On A10-A11 devices crucial functionality such as the Home Button, Audio, Microphone, Vibration does NOT work at the moment.
 - You should NOT be tether downgrading your main device it is only recommended to tether downgrade a second device.
-- 
 ## Requirements:
 - [libirecovery](https://github.com/libimobiledevice/libirecovery)
 - [futurerestore (fork)](https://github.com/futurerestore/futurerestore)
-   - futurerestore must be the nightly build. A compiled binary can be found [here](https://github.com/futurerestore/futurerestore/actions)
+- futurerestore must be the nightly build. A compiled binary can be found [here](https://github.com/futurerestore/futurerestore/actions)
 - [iBoot64patcher (fork)](https://github.com/Cryptiiiic/iBoot64Patcher)
 - Precompiled binaries for iBoot64Patcher can be found [here](https://github.com/Cryptiiiic/iBoot64Patcher/actions)
 - [Kernel64patcher (fork)](https://github.com/iSuns9/Kernel64Patcher)
