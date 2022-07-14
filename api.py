@@ -2,7 +2,18 @@ import requests
 from remotezip import RemoteZip
 
 def get_keys(identifier, board, buildid):
-	f = requests.get(f"https://api.m1sta.xyz/wikiproxy/{identifier}/{board}/{buildid}").json()
+	try:
+		f = requests.get(f"https://api.m1sta.xyz/wikiproxy/{identifier}/{board}/{buildid}").json()
+	except Exception:
+		if input(f"[?] Keys not found for this IPSW ({buildid}) for the board {board}. Do you want to enter keys manually? (y/n) ") == "y":
+			iBSS_iv = input("  - Enter the iBSS IV: ")
+			iBSS_key = input("  - Enter the iBSS Key: ")
+			iBEC_iv = input("  - Enter the iBEC IV: ")
+			iBEC_key = input("  - Enter the iBEC Key: ")
+			return iBSS_iv, iBSS_key, iBEC_iv, iBEC_key
+		else:
+			exit()
+		print("Requesting keys...")
 	for dev in f['keys']:
 		if dev['image'] == "iBSS":
 			iBSS_iv = dev['iv']
