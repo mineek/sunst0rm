@@ -7,7 +7,7 @@ import api
 import subprocess
 import shutil
 
-os.chdir(os.path.dirname(sys.argv[0]))
+#os.chdir(os.path.dirname(sys.argv[0]))
 
 def dependencies():
     import os
