@@ -1,6 +1,8 @@
 # sunst0rm
 iOS Tether Downgrader for checkm8 devices
 
+## WARNING: THIS IS THE DEV BRANCH! THIS MAY NOT WORK AND YOU ARE ON YOUR OWN IF YOU USE THE DEV BRANCH!
+
 Based on [my guide](https://github.com/mineek/iostethereddowngrade)
 
 ## Join the [Discord](https://discord.gg/TqVH6NBwS3) server for help
