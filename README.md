@@ -34,24 +34,24 @@ Based on [my guide](https://github.com/mineek/iostethereddowngrade)
 |-----------------|-----------------------------|------------------------------------------|
 | `-i IPSW`       | `--ipsw IPSW`               | Path to IPSW                             |
 | `-t SHSH2`      | `--blob SHSH2`              | Path to SHSH2                            |
-| `-r true`       | `--restore true`            | Restore mode                             |
-| `-b true`       | `--boot true`               | Boot mode                                |
+| `-r`       | `--restore`            | Restore mode                             |
+| `-b`       | `--boot`               | Boot mode                                |
 | `-d BOARDCONFIG`| `--boardconfig BOARDCONFIG` | BoardConfig to use  (E.g: `d221ap`)      |
-| `-kpp true`     | `--kpp true`                | Use KPP (A9 or lower)                    |
+| `-kpp`     | `--kpp`                | Use KPP (A9 or lower)                    |
 | `-id IDENTIFIER`| `--identifier IDENTIFIER`   | Identifier to use  (E.g: `iPhone10,6`)   |
-|                 | `--legacy true`             | Use Legacy Mode (iOS 11 or lower)        |
+|                 | `--legacy`             | Use Legacy Mode (iOS 11 or lower)        |
 |                 | `--skip-baseband`           | Skip Baseband sending, do NOT do this if your device does have baseband this argument is only ment to be passed when your device does *not* have baseband such as WiFi only iPads.                  |
 ### Restoring
 ```py
-python3 sunstorm.py -i 'IPSW' -t 'SHSH2' -r true -d 'BOARDCONFIG'
+python3 sunstorm.py -i 'IPSW' -t 'SHSH2' -r -d 'BOARDCONFIG'
 ```
-- Use `--kpp true` if you have KPP, otherwise don't add
-- A10+ Devices do NOT have KPP so do not add `--kpp true` if you are attempting to tether downgrade an A10+ device, A7-A9X devices does have KPP so that means you will pass `--kpp true` and to clear things up having KPP or not does not change the fact if you are able to tether downgrade your device.
+- Use `--kpp` if you have KPP, otherwise don't add
+- A10+ Devices do NOT have KPP so do not add `--kpp` if you are attempting to tether downgrade an A10+ device, A7-A9X devices does have KPP so that means you will pass `--kpp` and to clear things up having KPP or not does not change the fact if you are able to tether downgrade your device.
 ### Booting
 ```py
-python3 sunstorm.py -i 'IPSW' -t 'SHSH2' -b true -d 'BOARDCONFIG' -id 'IDENTIFIER'
+python3 sunstorm.py -i 'IPSW' -t 'SHSH2' -b -d 'BOARDCONFIG' -id 'IDENTIFIER'
 ```
-- Use `--kpp true` if you have KPP, otherwise don't add
+- Use `--kpp` if you have KPP, otherwise don't add
 ```
 ./boot.sh
 ```
