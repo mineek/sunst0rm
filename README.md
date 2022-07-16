@@ -3,7 +3,8 @@ iOS Tether Downgrader for checkm8 devices
 
 Based on [my guide](https://github.com/mineek/iostethereddowngrade)
 
-## Join the [Discord](https://discord.gg/TqVH6NBwS3) server for help
+## See [this guide](https://github.com/Arna13/sunst0rm-guide) for help
+### If you still have problems, join the [Discord](https://discord.gg/TqVH6NBwS3) server for help
 
 ## Notes
 - It is a *tethered* downgrade meaning you will have to boot tethered every single time from your PC if your battery dies or if you reboot your phone.
@@ -58,3 +59,5 @@ python3 sunstorm.py -i 'IPSW' -t 'SHSH2' -b -d 'BOARDCONFIG' -id 'IDENTIFIER'
 
 ## Credits:
 [M1n1Exploit](https://github.com/Mini-Exploit) - Some code from ra1nstorm
+
+[Arna13](https://github.com/Arna13) - Writing an easy to understand [guide](https://github.com/Arna13/sunst0rm-guide)
