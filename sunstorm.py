@@ -97,24 +97,24 @@ def prep_restore(ipsw, blob, board, kpp, legacy, skip_baseband):
     subprocess.run(['/usr/bin/hdiutil', 'detach', 'work/ramdisk'])
     # create the ramdisk using pyimg4
     print('[*] Creating RamDisk')
-    subprocess.run(['pyimg4', 'im4p', 'create', '-i', 'work/ramdisk.dmg', '-o', 'work/ramdisk.im4p', '-f', 'rdsk'])
+    subprocess.run([sys.executable, '-m', 'pyimg4', 'im4p', 'create', '-i', 'work/ramdisk.dmg', '-o', 'work/ramdisk.im4p', '-f', 'rdsk'])
     # get kernelcache name from manifest
     kernelcache = manifest.get_comp(board, 'RestoreKernelCache')
     # extract the kernel using pyimg4 like this: pyimg4 im4p extract -i kernelcache -o kcache.raw --extra kpp.bin 
     print('[*] Extracting Kernel')
     if kpp:
-        subprocess.run(['pyimg4', 'im4p', 'extract', '-i', 'work/' + kernelcache, '-o', 'work/kcache.raw', '--extra', 'work/kpp.bin'])
+        subprocess.run([sys.executable, '-m', 'pyimg4', 'im4p', 'extract', '-i', 'work/' + kernelcache, '-o', 'work/kcache.raw', '--extra', 'work/kpp.bin'])
     else:
-        subprocess.run(['pyimg4', 'im4p', 'extract', '-i', 'work/' + kernelcache, '-o', 'work/kcache.raw'])
+        subprocess.run([sys.executable, '-m', 'pyimg4', 'im4p', 'extract', '-i', 'work/' + kernelcache, '-o', 'work/kcache.raw'])
     # patch the kernel using kernel64patcher like this: Kernel64Patcher kcache.raw krnl.patched -f -a
     print('[*] Patching Kernel')
     subprocess.run(['/usr/local/bin/kernel64patcher', 'work/kcache.raw', 'work/krnl.patched', '-f', '-a'])
     # rebuild the kernel like this: pyimg4 im4p create -i krnl.patched -o krnl.im4p --extra kpp.bin -f rkrn --lzss (leave out --extra kpp.bin if you dont have kpp)
     print('[*] Rebuilding Kernel')
     if kpp:
-        subprocess.run(['pyimg4', 'im4p', 'create', '-i', 'work/krnl.patched', '-o', 'work/krnl.im4p', '--extra', 'work/kpp.bin', '-f', 'rkrn', '--lzss'])
+        subprocess.run([sys.executable, '-m', 'pyimg4', 'im4p', 'create', '-i', 'work/krnl.patched', '-o', 'work/krnl.im4p', '--extra', 'work/kpp.bin', '-f', 'rkrn', '--lzss'])
     else:
-        subprocess.run(['pyimg4', 'im4p', 'create', '-i', 'work/krnl.patched', '-o', 'work/krnl.im4p', '-f', 'rkrn', '--lzss'])
+        subprocess.run([sys.executable, '-m', 'pyimg4', 'im4p', 'create', '-i', 'work/krnl.patched', '-o', 'work/krnl.im4p', '-f', 'rkrn', '--lzss'])
     # done!
     print('[*] Done!')
     # ask user if they want to restore the device
@@ -213,21 +213,21 @@ def prep_boot(ipsw, blob, board, kpp, identifier, legacy):
     # extract the kernel like this:  pyimg4 im4p extract -i kernelcache -o kcache.raw --extra kpp.bin 
     print('[*] Extracting Kernel')
     if kpp:
-        subprocess.run(['pyimg4', 'im4p', 'extract', '-i', 'work/' + kernelcache, '-o', 'work/kcache.raw', '--extra', 'work/kpp.bin'])
+        subprocess.run([sys.executable, '-m', 'pyimg4', 'im4p', 'extract', '-i', 'work/' + kernelcache, '-o', 'work/kcache.raw', '--extra', 'work/kpp.bin'])
     else:
-        subprocess.run(['pyimg4', 'im4p', 'extract', '-i', 'work/' + kernelcache, '-o', 'work/kcache.raw'])
+        subprocess.run([sys.executable, '-m', 'pyimg4', 'im4p', 'extract', '-i', 'work/' + kernelcache, '-o', 'work/kcache.raw'])
     # patch it like this:   Kernel64Patcher kcache.raw krnlboot.patched -f
     print('[*] Patching Kernel')
     subprocess.run(['/usr/local/bin/Kernel64Patcher', 'work/kcache.raw', 'work/krnlboot.patched', '-f'])
     # convert it like this:   pyimg4 im4p create -i krnlboot.patched -o krnlboot.im4p --extra kpp.bin -f rkrn --lzss
     print('[*] Converting Kernel')
     if kpp:
-        subprocess.run(['pyimg4', 'im4p', 'create', '-i', 'work/krnlboot.patched', '-o', 'work/krnlboot.im4p', '--extra', 'work/kpp.bin', '-f', 'rkrn', '--lzss'])
+        subprocess.run([sys.executable, '-m', 'pyimg4', 'im4p', 'create', '-i', 'work/krnlboot.patched', '-o', 'work/krnlboot.im4p', '--extra', 'work/kpp.bin', '-f', 'rkrn', '--lzss'])
     else:
-        subprocess.run(['pyimg4', 'im4p', 'create', '-i', 'work/krnlboot.patched', '-o', 'work/krnlboot.im4p', '-f', 'rkrn', '--lzss'])
+        subprocess.run([sys.executable, '-m', 'pyimg4', 'im4p', 'create', '-i', 'work/krnlboot.patched', '-o', 'work/krnlboot.im4p', '-f', 'rkrn', '--lzss'])
     # sign it like this:  pyimg4 img4 create -p krnlboot.im4p -o krnlboot.img4 -m IM4M
     print('[*] Signing Kernel')
-    subprocess.run(['pyimg4', 'img4', 'create', '-p', 'work/krnlboot.im4p', '-o', 'work/krnlboot.img4', '-m', 'IM4M'])
+    subprocess.run([sys.executable, '-m', 'pyimg4', 'img4', 'create', '-p', 'work/krnlboot.im4p', '-o', 'work/krnlboot.img4', '-m', 'IM4M'])
     # create boot directory
     print('[*] Creating Boot Directory')
     subprocess.run(['mkdir', 'boot'])
