@@ -42,6 +42,9 @@ def dependencies():
 def prep_restore(ipsw, blob, board, kpp, legacy, skip_baseband):
     # getting lowercase board to avoid errors
     board = board.lower()
+    # check if ./work directory already exists, and deleting if it does
+    if os.path.exists('./work'):
+        shutil.rmtree('./work')
     # extract the IPSW to the work directory
     print('[*] Extracting IPSW')
     with zipfile.ZipFile(ipsw, 'r') as z:
@@ -161,6 +164,11 @@ def prep_restore(ipsw, blob, board, kpp, legacy, skip_baseband):
 def prep_boot(ipsw, blob, board, kpp, identifier, legacy):
     # getting lowercase board to avoid errors
     board = board.lower()
+    # checking if work and boot direcotries exist, and deleting if they do
+    if os.path.exists('./work'):
+        shutil.rmtree('./work')
+    if os.path.exists('./boot'):
+        shutil.rmtree('./boot')
     # create a working directory
     print('[*] Creating Working Directory')
     subprocess.run(['/bin/mkdir', 'work'])
