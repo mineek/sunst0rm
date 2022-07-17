@@ -40,6 +40,8 @@ def dependencies():
     
 
 def prep_restore(ipsw, blob, board, kpp, legacy, skip_baseband):
+    # getting lowercase board to avoid errors
+    board = board.lower()
     # extract the IPSW to the work directory
     print('[*] Extracting IPSW')
     with zipfile.ZipFile(ipsw, 'r') as z:
@@ -51,6 +53,9 @@ def prep_restore(ipsw, blob, board, kpp, legacy, skip_baseband):
         manifest = Manifest(f.read())
     # get the ramdisk name
     ramdisk_path = manifest.get_comp(board, 'RestoreRamDisk')
+    if ramdisk_path == None:
+        print("[!] Error: BoardConfig was not recognized")
+        sys.exit(1)
     # extract it using img4
     print('[*] Extracting RamDisk')
     subprocess.run(['/usr/local/bin/img4', '-i', 'work/' + ramdisk_path, '-o', 'work/ramdisk.dmg'])
@@ -154,6 +159,8 @@ def prep_restore(ipsw, blob, board, kpp, legacy, skip_baseband):
         sys.exit(0)
 
 def prep_boot(ipsw, blob, board, kpp, identifier, legacy):
+    # getting lowercase board to avoid errors
+    board = board.lower()
     # create a working directory
     print('[*] Creating Working Directory')
     subprocess.run(['/bin/mkdir', 'work'])
