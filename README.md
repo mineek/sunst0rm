@@ -4,6 +4,7 @@ iOS Tether Downgrader for checkm8 devices
 Based on [my guide](https://github.com/mineek/iostethereddowngrade)
 
 ## See [this guide](https://github.com/Arna13/sunst0rm-guide) for help
+## You can also watch [this youtube video](https://www.youtube.com/watch?v=P1m_DsoWyb0) for a video tutorial
 ### If you still have problems, join the [Discord](https://discord.gg/TqVH6NBwS3) server for help
 
 ## Notes
