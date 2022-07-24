@@ -265,7 +265,6 @@ def prep_boot(ipsw, blob, board, kpp, identifier, legacy):
 
 
 def main():
-    dependencies()
     parser = argparse.ArgumentParser(description='iOS Tethered IPSW Restore')
     parser.add_argument('-i', '--ipsw', help='IPSW to restore', required=True)
     parser.add_argument('-t', '--blob', help='Blob to use', required=True)
