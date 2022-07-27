@@ -2,6 +2,8 @@ echo 'Ensure that device is in pwnDFU mode with sigcheck patches applied.'
 sleep 1
 
 irecovery -f boot/iBSS.img4
+# send iBSS again.
+irecovery -f boot/iBSS.img4
 irecovery -f boot/iBEC.img4
 # execute irecovery -c go to load iBEC image on A10+
 irecovery -c go
