@@ -243,10 +243,13 @@ def prep_boot(ipsw, blob, board, kpp, identifier, legacy):
     # sign it like this:  pyimg4 img4 create -p krnlboot.im4p -o krnlboot.img4 -m IM4M
     print('[*] Signing Kernel')
     subprocess.run([sys.executable, '-m', 'pyimg4', 'img4', 'create', '-p', 'work/krnlboot.im4p', '-o', 'work/krnlboot.img4', '-m', 'IM4M'])
-    # create boot directory
     print('[*] Creating Boot Directory')
     subprocess.run(['mkdir', 'boot'])
-    # copy ibss, ibec, trustcache, devicetree, and krnlboot to the boot directory
+    print('[*] Creating bootlogo')
+    subprocess.run(['/usr/local/bin/ibootim', 'bootlogo.png' ,'bootlogo.ibootim'])
+    subprocess.run(['/usr/local/bin/img4tool', '-c', 'bootlogo.im4p', '-t logo', 'bootlogo.ibootim'])
+    subprocess.run(['/usr/local/bin/img4tool', '-c' ,'bootlogo.img4' ,'-p', 'bootlogo.im4p' ,'-s ', blob])
+    # copy ibss, ibec, trustcache, devicetree, and krnlboot, and the bootlogo to the boot directory
     print('[*] Copying files to boot directory')
     subprocess.run(['cp', 'work/ibss.img4', 'boot/ibss.img4'])
     subprocess.run(['cp', 'work/ibec.img4', 'boot/ibec.img4'])
@@ -254,6 +257,7 @@ def prep_boot(ipsw, blob, board, kpp, identifier, legacy):
         subprocess.run(['cp', 'work/trustcache.img4', 'boot/trustcache.img4'])
     subprocess.run(['cp', 'work/devicetree.img4', 'boot/devicetree.img4'])
     subprocess.run(['cp', 'work/krnlboot.img4', 'boot/krnlboot.img4'])
+    subprocess.run(['cp', 'bootlogo.img4', 'boot/bootlogo.img4'])
     # clean up
     print('[*] Cleaning up')
     subprocess.run(['rm', '-rf', 'work'])
