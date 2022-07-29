@@ -5,6 +5,8 @@ irecovery -f boot/iBSS.img4
 # send iBSS again.
 irecovery -f boot/iBSS.img4
 irecovery -f boot/iBEC.img4
+irecovery -f boot/bootlogo.img4
+sleep 3
 irecovery -f boot/devicetree.img4
 irecovery -c devicetree
 irecovery -f boot/trustcache.img4
