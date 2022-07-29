@@ -1,4 +1,4 @@
-![Logo](https://cdn.discordapp.com/attachments/996036149913067691/1002492697560490125/sunst0rm-bitlightcloud.png)
+![Logo](https://cdn.discordapp.com/attachments/1002450787085066250/1002533777693745182/sunst0rmgithub.png)
 
 # sunst0rm
 iOS Tether Downgrader for checkm8 devices
