@@ -6,8 +6,8 @@ irecovery -f boot/iBSS.img4
 irecovery -f boot/iBSS.img4
 irecovery -f boot/iBEC.img4
 irecovery -f boot/bootlogo.img4
-irecovery -c setpicture 0
-irecovery -c bgcolor 0 0 0
+irecovery -c "setpicture 0"
+irecovery -c "bgcolor 0 0 0"
 sleep 3
 irecovery -f boot/devicetree.img4
 irecovery -c devicetree
