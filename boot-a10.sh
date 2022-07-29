@@ -7,6 +7,10 @@ irecovery -f boot/iBSS.img4
 irecovery -f boot/iBEC.img4
 # execute irecovery -c go to load iBEC image on A10+
 irecovery -c go
+irecovery -f boot/bootlogo.img4
+irecovery -c "setpicture 0"
+irecovery -c "bgcolor 0 0 0"
+sleep 3
 irecovery -f boot/devicetree.img4
 irecovery -c devicetree
 irecovery -f boot/trustcache.img4
