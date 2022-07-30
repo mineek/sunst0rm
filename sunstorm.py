@@ -37,7 +37,9 @@ def dependencies():
     if not os.path.exists('/usr/local/bin/restored_external64_patcher'):
         print('[!] restored_external64_patcher not found, please install it')
         sys.exit(1)
-    
+    if not os.path.exists('/usr/local/bin/ibootim'):
+        print('[!] ibootim not found, please install it')
+        sys.exit(1)
 
 def prep_restore(ipsw, blob, board, kpp, legacy, skip_baseband):
     # getting lowercase board to avoid errors
@@ -247,8 +249,8 @@ def prep_boot(ipsw, blob, board, kpp, identifier, legacy):
     subprocess.run(['mkdir', 'boot'])
     print('[*] Creating bootlogo')
     subprocess.run(['/usr/local/bin/ibootim', 'bootlogo.png' ,'bootlogo.ibootim'])
-    subprocess.run(['/usr/local/bin/img4tool', '-c', 'bootlogo.im4p', '-t logo', 'bootlogo.ibootim'])
-    subprocess.run(['/usr/local/bin/img4tool', '-c' ,'bootlogo.img4' ,'-p', 'bootlogo.im4p' ,'-s ', blob])
+    subprocess.run(['/usr/local/bin/img4tool', '-c', 'bootlogo.im4p', '-t', 'logo', 'bootlogo.ibootim'])
+    subprocess.run(['/usr/local/bin/img4tool', '-c' ,'bootlogo.img4' ,'-p', 'bootlogo.im4p', '-s', blob])
     # copy ibss, ibec, trustcache, devicetree, and krnlboot, and the bootlogo to the boot directory
     print('[*] Copying files to boot directory')
     subprocess.run(['cp', 'work/ibss.img4', 'boot/ibss.img4'])
