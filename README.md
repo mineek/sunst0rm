@@ -65,3 +65,5 @@ python3 sunstorm.py -i 'IPSW' -t 'SHSH2' -b -d 'BOARDCONFIG' -id 'IDENTIFIER'
 [M1n1Exploit](https://github.com/Mini-Exploit) - Some code from ra1nstorm
 
 [Arna13](https://github.com/Arna13) - Writing an easy to understand [guide](https://github.com/Arna13/sunst0rm-guide)
+
+swayea#1655 - Logo's
