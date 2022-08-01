@@ -25,6 +25,7 @@ Based on [my guide](https://github.com/mineek/iostethereddowngrade)
 - [ldid](https://github.com/ProcursusTeam/ldid)
 - [restored_external64_patcher](https://github.com/iSuns9/restored_external64patcher)
 - [asr64_patcher](https://github.com/exploit3dguy/asr64_patcher)
+- [asr64_patcher_ios15 (fork)](https://github.com/growtopiajaw/asr64_patcher)
 - [Python3](https://www.python.org/downloads)
    - Make sure you updated Python and are not using the bundled one in macOS
 - [iBootim](https://github.com/realnp/ibootim)
