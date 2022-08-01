@@ -37,9 +37,12 @@ def dependencies():
     if not os.path.exists('/usr/local/bin/restored_external64_patcher'):
         print('[!] restored_external64_patcher not found, please install it')
         sys.exit(1)
+    if not os.path.exists('/usr/local/bin/asr64_patcher_ios15'):
+        print('[!] asr64_patcher_ios15 not found, please install it')
+        sys.exit(1)
     
 
-def prep_restore(ipsw, blob, board, kpp, legacy, skip_baseband):
+def prep_restore(ipsw, blob, board, kpp, legacy, skip_baseband, ios15):
     # getting lowercase board to avoid errors
     board = board.lower()
     # extract the IPSW to the work directory
@@ -64,7 +67,10 @@ def prep_restore(ipsw, blob, board, kpp, legacy, skip_baseband):
     subprocess.run(['/usr/bin/hdiutil', 'attach', 'work/ramdisk.dmg', '-mountpoint', 'work/ramdisk'])
     # patch asr into the ramdisk
     print('[*] Patching ASR in the RamDisk')
-    subprocess.run(['/usr/local/bin/asr64_patcher', 'work/ramdisk/usr/sbin/asr', 'work/patched_asr'])
+    if ios15:
+        subprocess.run(['/usr/local/bin/asr64_patcher_ios15', 'work/ramdisk/usr/sbin/asr', 'work/patched_asr'])
+    else:
+        subprocess.run(['/usr/local/bin/asr64_patcher', 'work/ramdisk/usr/sbin/asr', 'work/patched_asr'])
     # extract the ents and save it to work/asr_ents.plist like:     subprocess.run(['/usr/local/bin/ldid', '-e', 'work/ramdisk/usr/sbin/asr', '>', 'work/asr.plist'])
     print('[*] Extracting ASR Ents')
     with open('work/asr.plist', 'wb') as f:
@@ -238,9 +244,10 @@ def main():
     parser.add_argument('-id', '--identifier', help='Identifier to use', required=False)
     parser.add_argument('--legacy', help='Use Legacy Mode (ios 11 or lower)', required=False, action='store_true')
     parser.add_argument('--skip-baseband', help='Skip Baseband', required=False, action='store_true')
+    parser.add_argument('--ios15', help='Use iOS 15', required=False, action='store_true')
     args = parser.parse_args()
     if args.restore:
-        prep_restore(args.ipsw, args.blob, args.boardconfig, args.kpp, args.legacy, args.skip_baseband)
+        prep_restore(args.ipsw, args.blob, args.boardconfig, args.kpp, args.legacy, args.skip_baseband, args.ios15)
     elif args.boot:
         if args.identifier == None:
             print('[!] You need to specify an identifier')
