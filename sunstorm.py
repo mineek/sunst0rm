@@ -40,6 +40,9 @@ def dependencies():
     if not os.path.exists('/usr/local/bin/ibootim'):
         print('[!] ibootim not found, please install it')
         sys.exit(1)
+    if not os.path.exists('/usr/local/bin/asr64_patcher_ios15'):
+        print('[!] asr64_patcher_ios15 not found, please install it')
+        sys.exit(1)
 
 def prep_restore(ipsw, blob, board, kpp, legacy, skip_baseband):
     # getting lowercase board to avoid errors
