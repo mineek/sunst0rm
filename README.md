@@ -5,7 +5,7 @@ iOS Tether Downgrader for checkm8 devices
 
 Based on [my guide](https://github.com/mineek/iostethereddowngrade)
 
-## please, please, please, DO NOT ask for help in any other discord. They're sick of getting issue after issue due to sunst0rm and I just don't want to irritate them, instead join the discord server linked below.
+## please, please, please, DO NOT ask for help in any other discord. Developers not affiliated with sunst0rm are sick of getting issue after issue due to sunst0rm and I just don't want to irritate them, instead join the discord server linked below.
 ## Also: please DO NOT open issues at [futurerestore](https://github.com/futurerestore/futurerestore) when using sunst0rm, they're almost always NOT the fault of futurerestore.
 
 ## See [this guide](https://github.com/Arna13/sunst0rm-guide) for help
