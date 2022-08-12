@@ -16,6 +16,9 @@ Based on [my guide](https://github.com/mineek/iostethereddowngrade)
 - It is a *tethered* downgrade meaning you will have to boot tethered every single time from your PC if your battery dies or if you reboot your phone.
 - On A10-A11 devices crucial functionality such as the Home Button, Audio, Microphone, Vibration does NOT work at the moment.
 - You should NOT be tether downgrading your main device it is only recommended to tether downgrade a second device.
+- See [iphonewiki](https://www.theiphonewiki.com/wiki/BORD) for boardconfigs and identifiers.
+- `linux-patches/` contain patches that allow you to compile everything for linux, install `hfsprogs` and reboot to mount hfsplus images! [AUR](https://aur.archlinux.org/packages/hfsprogs)
+
 ## Requirements:
 - [libirecovery](https://github.com/libimobiledevice/libirecovery)
 - [futurerestore (fork)](https://github.com/futurerestore/futurerestore)
@@ -30,7 +33,6 @@ Based on [my guide](https://github.com/mineek/iostethereddowngrade)
 - [asr64_patcher](https://github.com/exploit3dguy/asr64_patcher)
 - [Python3](https://www.python.org/downloads)
    - Make sure you updated Python and are not using the bundled one in macOS
-- [iBootim](https://github.com/realnp/ibootim)
 - Python dependencies
    - `pip3 install -r requirements.txt`
    - A device that is vulnerable to checkm8 (A7-A11 devices.), if your device is not vulnerable then you can *NOT* tether downgrade at all. 

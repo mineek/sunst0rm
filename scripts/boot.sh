@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 echo 'Ensure device is in pwnDFU mode with sigchecks removed.'
 sleep 1
 
