@@ -1,0 +1,9 @@
+--- asr64_patcher_orig/asr64_patcher.c	2022-08-12 09:40:42.496554546 -0500
++++ asr64_patcher/asr64_patcher.c	2022-08-12 09:40:15.089480344 -0500
+@@ -1,4 +1,6 @@
++#define _GNU_SOURCE
+ #include <stdio.h>
++#include <stdint.h>
+ #include <stdlib.h>
+ #include <string.h>
+ 
