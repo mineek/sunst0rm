@@ -12,6 +12,8 @@ Based on [my guide](https://github.com/mineek/iostethereddowngrade)
 ## You can also watch [this youtube video](https://www.youtube.com/watch?v=P1m_DsoWyb0) for a video tutorial
 ### If you still have problems, join the [Discord](https://discord.gg/TqVH6NBwS3) server for help
 
+### Linux version by [MCApollo](https://github.com/MCApollo): [here](https://github.com/MCApollo/sunst0rm) ( only tested on arch )
+
 ## Notes
 - It is a *tethered* downgrade meaning you will have to boot tethered every single time from your PC if your battery dies or if you reboot your phone.
 - On A10-A11 devices crucial functionality such as the Home Button, Audio, Microphone, Vibration does NOT work at the moment.
