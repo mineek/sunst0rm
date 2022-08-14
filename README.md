@@ -9,6 +9,7 @@ Based on [my guide](https://github.com/mineek/iostethereddowngrade)
 ## Also: please DO NOT open issues at [futurerestore](https://github.com/futurerestore/futurerestore) when using sunst0rm, they're almost always NOT the fault of futurerestore.
 
 ## See [this guide](https://github.com/Arna13/sunst0rm-guide) for help
+## You can also watch [this youtube video](https://www.youtube.com/watch?v=P1m_DsoWyb0) for a video tutorial
 ### If you still have problems, join the [Discord](https://discord.gg/TqVH6NBwS3) server for help
 
 ### Linux version by [MCApollo](https://github.com/MCApollo): [here](https://github.com/MCApollo/sunst0rm) ( only tested on arch )
