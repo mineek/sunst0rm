@@ -32,7 +32,6 @@ Based on [my guide](https://github.com/mineek/iostethereddowngrade)
 - [asr64_patcher](https://github.com/exploit3dguy/asr64_patcher)
 - [Python3](https://www.python.org/downloads)
    - Make sure you updated Python and are not using the bundled one in macOS
-- [iBootim](https://github.com/realnp/ibootim)
 - Python dependencies
    - `pip3 install -r requirements.txt`
    - A device that is vulnerable to checkm8 (A7-A11 devices.), if your device is not vulnerable then you can *NOT* tether downgrade at all. 
