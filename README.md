@@ -48,7 +48,7 @@ Based on [my guide](https://github.com/mineek/iostethereddowngrade)
 | `-d BOARDCONFIG`| `--boardconfig BOARDCONFIG` | BoardConfig to use  (E.g: `d221ap`)      |
 | `-kpp`     | `--kpp`                | Use KPP (A9 or lower)                    |
 | `-id IDENTIFIER`| `--identifier IDENTIFIER`   | Identifier to use  (E.g: `iPhone10,6`)   |
-|                 | `--legacy`             | Use Legacy Mode (iOS 11 or lower)        |
+|                 | `--legacy`             | Use Legacy Mode (version downgrading to is iOS 11 or lower)        |
 |                 | `--skip-baseband`           | Skip Baseband sending, do NOT do this if your device does have baseband this argument is only ment to be passed when your device does *not* have baseband such as WiFi only iPads.                  |
 ### Restoring
 ```py
