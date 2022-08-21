@@ -1,3 +1,5 @@
+#!/usr/bin/bash
+
 check=$(irecovery -q | grep CPID | sed 's/CPID: //')
 
 echo 'Ensure device is in pwnDFU mode with sigchecks removed.'
