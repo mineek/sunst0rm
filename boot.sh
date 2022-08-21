@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 check=$(irecovery -q | grep CPID | sed 's/CPID: //')
 
