@@ -7,9 +7,6 @@ if [ $device_dfu = 0 ]; then
     exit
 fi
 
-gaster pwn
-ecid=$(irecovery -q | grep "ECID" | sed 's/ECID: //')
-
 if [ -z "$1" ]; then
     echo "No argument provided."
     echo "USAGE:"
@@ -17,6 +14,9 @@ if [ -z "$1" ]; then
     echo "  $0 boot"
     exit
 fi
+
+gaster pwn
+ecid=$(irecovery -q | grep "ECID" | sed 's/ECID: //')
 
 if [ "$1" == "boot" ]; then
     if [ ! -d boot ]; then
