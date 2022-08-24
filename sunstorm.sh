@@ -81,32 +81,21 @@ fi
 mkdir work
 mkdir boot
 
-# if [ -z "$2" ]; then
-#  echo "You forgot an boardconfig :P"
-#  exit
-# fi
+ipsw=$1
+boardconfig=$2
 
-# ipsw=$1
-# boardconfig=$2
-
-# if [ -e $ipsw ] || [ ${ipsw: -5} == ".ipsw" ]; then
-# echo "Continuing..."
-# else
-# echo "You forgot an ipsw :P"
-# echo "ipsw is required to continue!"
-# exit
-# fi
-
-if [[ "$1" == "" ]]; then
- echo "You forgot an ipsw :P"
- exit
+if [ -e $ipsw ] || [ ${ipsw: -5} == ".ipsw" ]; then
+echo "Continuing..."
+else
+echo "You forgot an ipsw :P"
+exit
 fi
-if [[ "$2" == "" ]]; then
+
+if [ -z "$boardconfig" ]; then
  echo "You forgot an boardconfig :P"
  exit
 fi
-ipsw=$1
-boardconfig=$2
+
 unzip -q $ipsw -d work
 buildmanifest=$(cat work/BuildManifest.plist)
 firmware=$(/usr/libexec/PlistBuddy -c "Print :ProductVersion" /dev/stdin <<< "$buildmanifest")
