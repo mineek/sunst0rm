@@ -96,7 +96,7 @@ if [ -z "$boardconfig" ]; then
  exit
 fi
 
-unzip -q $ipsw -d work
+unzip -q $ipsw -x *.dmg -d work
 buildmanifest=$(cat work/BuildManifest.plist)
 firmware=$(/usr/libexec/PlistBuddy -c "Print :ProductVersion" /dev/stdin <<< "$buildmanifest")
 device=$(/usr/libexec/PlistBuddy -c "Print :SupportedProductTypes" /dev/stdin <<< "$buildmanifest")
@@ -153,6 +153,7 @@ if [[ -e restore/krnl.im4p ]]; then
 else
  ramdisk=$(/usr/libexec/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:RestoreRamDisk:Info:Path" | sed 's/"//g')
  echo "Found ramdisk: $ramdisk"
+ unzip -q $ipsw $ramdisk -d work
  img4 -i work/$ramdisk -o work/ramdisk.dmg
  mkdir work/ramdisk
  hdiutil attach work/ramdisk.dmg -mountpoint work/ramdisk
