@@ -42,22 +42,36 @@ if [ "$1" == "boot" ]; then
     else
         echo "Required files not found, run script again!"
     fi
+    
     echo "Done!"
     exit
 fi
 
 _runFuturerestore() {
-    echo "===================================================="
-    echo "Using 'futurerestore' command to restore device."
-    echo "When its done, put device in DFU mode again."
-    echo "Then, run the following command to boot device:"
+    echo "================================================================"
+    echo "Using 'futurerestore' command"
+    echo "If command fails reboot into DFU mode, run script again!"
+    echo "Then, reboot into DFU mode again"
+    echo "Run the following command to boot device:"
     echo "$0 boot"
-    echo "===================================================="
+    echo "================================================================"
     read -p "Press ENTER to continue <-"
     restore_ipsw=$(cat restore/ipsw_path)
     futurerestore -t $shsh --use-pwndfu --skip-blob --rdsk restore/ramdisk.im4p --rkrn restore/krnl.im4p --latest-sep --latest-baseband $restore_ipsw
     exit
 }
+
+if [ -d restore ]; then
+    echo "Restore from previous run ? (y/n):"
+    read yn
+    
+    if [ "$yn" == "y" ]; then
+        echo "Continuing to futurerestore..."
+        _runFuturerestore
+    else
+        rm -rf restore/
+    fi
+fi
 
 if [ -d work ]; then
     rm -rf work/
@@ -186,6 +200,7 @@ else
  else
   pyimg4 im4p extract -i work/$kernelcache -o work/kcache.raw
  fi
+ 
  Kernel64Patcher work/kcache.raw work/krnl.patched -f -a
  
  if [[ $kpp == 1 ]]; then
@@ -193,6 +208,7 @@ else
  else
   pyimg4 im4p create -i work/krnl.patched -o restore/krnl.im4p -f rkrn --lzss
  fi
+ 
  echo "Continuing to futurerestore..."
  echo $ipsw > restore/ipsw_path
  _runFuturerestore
