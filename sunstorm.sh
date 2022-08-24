@@ -57,22 +57,32 @@ fi
 mkdir work
 mkdir boot
 
-if [ -z "$2" ]; then
+# if [ -z "$2" ]; then
+#  echo "You forgot an boardconfig :P"
+#  exit
+# fi
+
+# ipsw=$1
+# boardconfig=$2
+
+# if [ -e $ipsw ] || [ ${ipsw: -5} == ".ipsw" ]; then
+# echo "Continuing..."
+# else
+# echo "You forgot an ipsw :P"
+# echo "ipsw is required to continue!"
+# exit
+# fi
+
+if [[ "$1" == "" ]]; then
+ echo "You forgot an ipsw :P"
+ exit
+fi
+if [[ "$2" == "" ]]; then
  echo "You forgot an boardconfig :P"
  exit
 fi
-
 ipsw=$1
 boardconfig=$2
-
-if [ -e $ipsw ] || [ ${ipsw: -5} == ".ipsw" ]; then
-echo "Continuing..."
-else
-echo "You forgot an ipsw :P"
-echo "ipsw is required to continue!"
-exit
-fi
-
 unzip -q $ipsw -d work
 buildmanifest=$(cat work/BuildManifest.plist)
 firmware=$(/usr/libexec/PlistBuddy -c "Print :ProductVersion" /dev/stdin <<< "$buildmanifest")
@@ -80,7 +90,6 @@ device=$(/usr/libexec/PlistBuddy -c "Print :SupportedProductTypes" /dev/stdin <<
 device=$(echo $device | grep -oEi "iPod[0-9],1|iPhone[0-9],1|iPad[0-9],1")
 echo "Firmware version: $firmware"
 echo "Device: $device"
-ecid=$(irecovery -q | grep "ECID" | sed 's/ECID: //')
 tsschecker -d $device -e $ecid --boardconfig $boardconfig -s -l
 shsh=$(ls *.shsh2)
 echo "Found shsh: $shsh"
