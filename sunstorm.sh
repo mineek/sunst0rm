@@ -46,7 +46,6 @@ if [ "$1" == "boot" ]; then
     exit
 fi
 
-ecid=$(irecovery -q | grep "ECID" | sed 's/ECID: //')
 ipsw=$1
 boardconfig=$2
 
@@ -76,6 +75,7 @@ device=$(/usr/libexec/PlistBuddy -c "Print :SupportedProductTypes" /dev/stdin <<
 device=$(echo $device | grep -oEi "iPod[0-9],1|iPhone[0-9],1|iPad[0-9],1")
 echo "Firmware version: $firmware"
 echo "Device: $device"
+ecid=$(irecovery -q | grep "ECID" | sed 's/ECID: //')
 tsschecker -d $device -e $ecid --boardconfig $boardconfig -s -l
 shsh=$(ls *.shsh2)
 echo "Found shsh: $shsh"
