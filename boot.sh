@@ -7,7 +7,8 @@ exit
 fi
 sleep 1
 cpid=$(irecovery -q | grep "CPID" | sed "s/CPID: //")
-#irecovery -f boot/iBSS.img4
+irecovery -f boot/iBSS.img4
+sleep 2
 # send iBSS again.
 irecovery -f boot/iBSS.img4
 sleep 3
