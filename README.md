@@ -13,3 +13,5 @@ MAC OS ONLY!
 This is only tested on iPhone 6s (n71map) ( no support for legacy devices )
 
 Usage: ./sunst0rm.sh IPSW
+
+booting: ./sunst0rm.sh boot
