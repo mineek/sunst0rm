@@ -16,7 +16,6 @@ if [ -z "$1" ]; then
 fi
 
 gaster pwn
-ecid=$(irecovery -q | grep "ECID" | sed 's/ECID: //')
 
 if [ "$1" == "boot" ]; then
     if [ ! -d boot ]; then
@@ -40,26 +39,35 @@ if [ "$1" == "boot" ]; then
         irecovery -f krnl.img4
         irecovery -c "bootx"
         echo "Device should be booting now."
-        echo "Done!"
     else
         echo "Required files not found, run script again!"
     fi
-    
+    echo "Done!"
     exit
 fi
 
+ipsw=$1
+
+if [ -e $ipsw ] || [ ${ipsw: -5} == ".ipsw" ]; then
+echo "Continuing..."
+else
+echo "You forgot an ipsw :P"
+echo "ipsw is required to continue!"
+exit
+fi
+
 if [ -d work ]; then
- rm -rf work/
+    rm -rf work/
+fi
+
+if [ -d boot ]; then
+    rm -rf boot/
 fi
 
 mkdir work
 mkdir boot
 
-if [[ "$1" == "" ]]; then
- echo "You forgot an ipsw :P"
- exit
-fi
-ipsw=$1
+ecid=$(irecovery -q | grep "ECID" | sed 's/ECID: //')
 boardconfig=$(irecovery -q | grep MODEL | sed 's/MODEL: //')
 unzip -q $ipsw -d work
 buildmanifest=$(cat work/BuildManifest.plist)
