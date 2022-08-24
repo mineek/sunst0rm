@@ -49,12 +49,14 @@ fi
 _runFuturerestore() {
     echo "===================================================="
     echo "Using 'futurerestore' command to restore device."
-    echo "Then, run the following command to boot your device:"
+    echo "When its done, put device in DFU mode again."
+    echo "Then, run the following command to boot device:"
     echo "$0 boot"
     echo "===================================================="
-    read -p "Press ENTER to contine <-"
+    read -p "Press ENTER to continue <-"
     restore_ipsw=$(cat restore/ipsw_path)
     futurerestore -t $shsh --use-pwndfu --skip-blob --rdsk restore/ramdisk.im4p --rkrn restore/krnl.im4p --latest-sep --latest-baseband $restore_ipsw
+    exit
 }
 
 if [ -d restore ]; then
@@ -204,7 +206,6 @@ else
   pyimg4 im4p create -i work/krnl.patched -o restore/krnl.im4p -f rkrn --lzss
  fi
  echo "Continuing to futurerestore..."
+ echo $ipsw > restore/ipsw_path
+ _runFuturerestore
 fi
-
-echo $ipsw > restore/ipsw_path
-_runFuturerestore
