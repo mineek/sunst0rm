@@ -51,7 +51,8 @@ _runFuturerestore() {
     echo "================================================================"
     echo "Using 'futurerestore' command"
     echo "If command fails reboot into DFU mode, run script again!"
-    echo "Then, reboot into DFU mode again"
+    echo ""
+    echo "If command succeeds, reboot into DFU mode again"
     echo "Run the following command to boot device:"
     echo "$0 boot"
     echo "================================================================"
@@ -68,9 +69,9 @@ if [ -d restore ]; then
     if [ "$yn" == "y" ]; then
         echo "Continuing to futurerestore..."
         _runFuturerestore
-    else
-        rm -rf restore/
     fi
+    
+    rm -rf restore/
 fi
 
 if [ -d work ]; then
