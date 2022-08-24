@@ -46,6 +46,28 @@ if [ "$1" == "boot" ]; then
     exit
 fi
 
+_runFuturerestore() {
+    echo "===================================================="
+    echo "Using 'futurerestore' command to restore device."
+    echo "Then, run the following command to boot your device:"
+    echo "$0 boot"
+    echo "===================================================="
+    read -p "Press ENTER to contine <-"
+    restore_ipsw=$(cat restore/ipsw_path)
+    futurerestore -t $shsh --use-pwndfu --skip-blob --rdsk restore/ramdisk.im4p --rkrn restore/krnl.im4p --latest-sep --latest-baseband $restore_ipsw
+}
+
+if [ -d restore ]; then
+    echo "RESTORE FROM PREVIOUS RUN ? (y/n):"
+    read previous
+    
+    if [ "$previous" == "y" ]; then
+        _runFuturerestore 
+    else
+        rm -rf restore/
+    fi
+fi
+
 if [ -d work ]; then
     rm -rf work/
 fi
@@ -183,7 +205,6 @@ else
  fi
  echo "Continuing to futurerestore..."
 fi
-echo "Please use this command to restore your device: ( may need to reboot into pwndfu )"
-echo "futurerestore -t $shsh --use-pwndfu --skip-blob --rdsk restore/ramdisk.im4p --rkrn restore/krnl.im4p --latest-sep --latest-baseband $ipsw"
-echo "Then, run the following command to boot your device:"
-echo "./sunstorm.sh boot"
+
+echo $ipsw > restore/ipsw_path
+_runFuturerestore
