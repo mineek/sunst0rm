@@ -57,6 +57,11 @@ echo "ipsw is required to continue!"
 exit
 fi
 
+if [ -z "$boardconfig" ]; then
+ echo "You forgot an boardconfig :P"
+ exit
+fi
+
 if [ -d work ]; then
     rm -rf work/
 fi
