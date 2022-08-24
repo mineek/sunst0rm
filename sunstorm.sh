@@ -57,6 +57,11 @@ fi
 mkdir work
 mkdir boot
 
+if [ -z "$2" ]; then
+ echo "You forgot an boardconfig :P"
+ exit
+fi
+
 ipsw=$1
 boardconfig=$2
 
@@ -66,11 +71,6 @@ else
 echo "You forgot an ipsw :P"
 echo "ipsw is required to continue!"
 exit
-fi
-
-if [ -z "$boardconfig" ]; then
- echo "You forgot an boardconfig :P"
- exit
 fi
 
 unzip -q $ipsw -d work
