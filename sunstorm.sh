@@ -46,6 +46,17 @@ if [ "$1" == "boot" ]; then
     exit
 fi
 
+if [ -d work ]; then
+    rm -rf work/
+fi
+
+if [ -d boot ]; then
+    rm -rf boot/
+fi
+
+mkdir work
+mkdir boot
+
 ipsw=$1
 boardconfig=$2
 
@@ -61,17 +72,6 @@ if [ -z "$boardconfig" ]; then
  echo "You forgot an boardconfig :P"
  exit
 fi
-
-if [ -d work ]; then
-    rm -rf work/
-fi
-
-if [ -d boot ]; then
-    rm -rf boot/
-fi
-
-mkdir work
-mkdir boot
 
 unzip -q $ipsw -d work
 buildmanifest=$(cat work/BuildManifest.plist)
