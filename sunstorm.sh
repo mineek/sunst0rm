@@ -59,17 +59,6 @@ _runFuturerestore() {
     exit
 }
 
-if [ -d restore ]; then
-    echo "RESTORE FROM PREVIOUS RUN ? (y/n):"
-    read previous
-    
-    if [ "$previous" == "y" ]; then
-        _runFuturerestore 
-    else
-        rm -rf restore/
-    fi
-fi
-
 if [ -d work ]; then
     rm -rf work/
 fi
