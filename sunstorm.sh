@@ -10,8 +10,8 @@ fi
 if [ -z "$1" ]; then
     echo "No argument provided."
     echo "USAGE:"
-    echo "  $0 <path_to_ipsw>"
-    echo "  $0 boot"
+    echo "  RESTORING: $0 <path_to_ipsw> <boardconfig>"
+    echo "  BOOTING: $0 boot"
     exit
 fi
 
@@ -19,7 +19,7 @@ gaster pwn
 
 if [ "$1" == "boot" ]; then
     if [ ! -d boot ]; then
-        echo "Run $0 <path_to_ipsw> first!"
+        echo "Run $0 <path_to_ipsw> <boardconfig> first!"
         exit
     fi
     
@@ -46,7 +46,9 @@ if [ "$1" == "boot" ]; then
     exit
 fi
 
+ecid=$(irecovery -q | grep "ECID" | sed 's/ECID: //')
 ipsw=$1
+boardconfig=$2
 
 if [ -e $ipsw ] || [ ${ipsw: -5} == ".ipsw" ]; then
 echo "Continuing..."
@@ -67,8 +69,6 @@ fi
 mkdir work
 mkdir boot
 
-ecid=$(irecovery -q | grep "ECID" | sed 's/ECID: //')
-boardconfig=$(irecovery -q | grep MODEL | sed 's/MODEL: //')
 unzip -q $ipsw -d work
 buildmanifest=$(cat work/BuildManifest.plist)
 firmware=$(/usr/libexec/PlistBuddy -c "Print :ProductVersion" /dev/stdin <<< "$buildmanifest")
