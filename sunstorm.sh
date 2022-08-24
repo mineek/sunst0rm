@@ -30,8 +30,12 @@ if [[ "$1" == "" ]]; then
  echo "You forgot an ipsw :P"
  exit
 fi
+if [[ "$2" == "" ]]; then
+ echo "You forgot an boardconfig :P"
+ exit
+fi
 ipsw=$1
-boardconfig=$(irecovery -q | grep MODEL | sed 's/MODEL: //')
+boardconfig=$2
 unzip -q $ipsw -d work
 buildmanifest=$(cat work/BuildManifest.plist)
 firmware=$(/usr/libexec/PlistBuddy -c "Print :ProductVersion" /dev/stdin <<< "$buildmanifest")
