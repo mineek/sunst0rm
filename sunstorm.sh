@@ -111,6 +111,7 @@ ibss=$(awk "/"${boardconfig_without_ap}"/{x=1}x&&/iBSS[.]/{print;exit}" work/Bui
 ibec=$(awk "/"${boardconfig_without_ap}"/{x=1}x&&/iBEC[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]dfu[/]//')
 echo "Found iBEC: $ibec"
 echo "Found iBSS: $ibss"
+
 if [[ -e boot/ibss.img4 ]]; then
  echo "Skipped making boot files."
 else
@@ -125,6 +126,7 @@ else
  img4 -i work/$devicetree -o boot/devicetree.img4 -M IM4M -T rdtr
  trustcache="$(/usr/libexec/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:StaticTrustCache:Info:Path" | sed 's/"//g')"
  img4 -i work/$trustcache -o boot/trustcache.img4 -M IM4M -T rtsc 
+ 
  if [[ $device == "iPhone8,"* || $device == "iPhone7,"* || $device == "iPhone6,"* ]]; then
   echo "Device has kpp"
   kpp=1
@@ -132,22 +134,25 @@ else
   echo "Device does not have kpp"
   kpp=0
  fi
+ 
  kernelcache=$(/usr/libexec/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:KernelCache:Info:Path" | sed 's/"//g')
+ 
  if [[ $kpp == 1 ]]; then
   pyimg4 im4p extract -i work/$kernelcache -o work/kcache.raw --extra work/kpp.bin 
- fi
- if [[ $kpp == 0 ]]; then
+ else
   pyimg4 im4p extract -i work/$kernelcache -o work/kcache.raw
  fi
+ 
  Kernel64Patcher work/kcache.raw work/krnl.patched -f
+ 
  if [[ $kpp == 1 ]]; then
   pyimg4 im4p create -i work/krnl.patched -o boot/krnl.im4p --extra work/kpp.bin -f rkrn --lzss
- fi
- if [[ $kpp == 0 ]]; then
+ else
   pyimg4 im4p create -i work/krnl.patched -o boot/krnl.im4p -f rkrn --lzss
  fi
   pyimg4 img4 create -p boot/krnl.im4p -o boot/krnl.img4 -m IM4M
 fi
+
 if [[ -e restore/krnl.im4p ]]; then
  echo "Skipped making restore files."
 else
@@ -157,6 +162,7 @@ else
  img4 -i work/$ramdisk -o work/ramdisk.dmg
  mkdir work/ramdisk
  hdiutil attach work/ramdisk.dmg -mountpoint work/ramdisk
+ sleep 5
  asr64_patcher work/ramdisk/usr/sbin/asr work/patched_asr
  ldid -e work/ramdisk/usr/sbin/asr > work/asr.plist
  ldid -Swork/asr.plist work/patched_asr
@@ -171,8 +177,10 @@ else
  cp work/patched_asr work/ramdisk/usr/sbin/asr
  cp work/patched_restored_external work/ramdisk/usr/local/bin/restored_external
  hdiutil detach work/ramdisk
+ sleep 5
  mkdir restore
  pyimg4 im4p create -i work/ramdisk.dmg -o restore/ramdisk.im4p -f rdsk
+ 
  if [[ $device == "iPhone8,"* || $device == "iPhone7,"* || $device == "iPhone6,"* ]]; then
   echo "Device has kpp"
   kpp=1
@@ -180,19 +188,20 @@ else
   echo "Device does not have kpp"
   kpp=0
  fi
+ 
  # get kernelcache from buildmanifest
  kernelcache=$(/usr/libexec/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:KernelCache:Info:Path" | sed 's/"//g')
+ 
  if [[ $kpp == 1 ]]; then
   pyimg4 im4p extract -i work/$kernelcache -o work/kcache.raw --extra work/kpp.bin 
- fi
- if [[ $kpp == 0 ]]; then
+ else
   pyimg4 im4p extract -i work/$kernelcache -o work/kcache.raw
  fi
  Kernel64Patcher work/kcache.raw work/krnl.patched -f -a
+ 
  if [[ $kpp == 1 ]]; then
   pyimg4 im4p create -i work/krnl.patched -o restore/krnl.im4p --extra work/kpp.bin -f rkrn --lzss
- fi
- if [[ $kpp == 0 ]]; then
+ else
   pyimg4 im4p create -i work/krnl.patched -o restore/krnl.im4p -f rkrn --lzss
  fi
  echo "Continuing to futurerestore..."
