@@ -1,31 +1,60 @@
+#!/bin/bash
+
+device_dfu=$(irecovery -m | grep -c "DFU")
+
+if [ $device_dfu = 0 ]; then
+    echo "No device found in DFU mode!"
+    exit
+fi
+
 gaster pwn
-ecid=$(irecovery -q | grep ECID | sed 's/ECID: //')
-if [[ $1 == "boot" ]]; then
-    if [[ -e boot/ibss.img4 ]]; then
-        echo "Found required files, continuing..."
-        irecovery -f boot/ibss.img4
-        irecovery -f boot/ibss.img4
-        irecovery -f boot/ibec.img4
-        irecovery -f boot/devicetree.img4
-        irecovery -c devicetree
-        irecovery -f aop.img4
-        irecovery -c firmware
-        irecovery -f boot/trustcache.img4
-        irecovery -c firmware
-        irecovery -f boot/krnl.img4
-        irecovery -c bootx
-        echo "Device should be booting now."
-        exit
-    else
-        echo "You need to run this script normally first."
+ecid=$(irecovery -q | grep "ECID" | sed 's/ECID: //')
+
+if [ -z "$1" ]; then
+    echo "No argument provided."
+    echo "USAGE:"
+    echo "  $0 <path_to_ipsw>"
+    echo "  $0 boot"
+    exit
+fi
+
+if [ "$1" == "boot" ]; then
+    if [ ! -d boot ]; then
+        echo "Run $0 <path_to_ipsw> first!"
         exit
     fi
+    
+    cd boot
+    
+    if [ -e ibss.img4 ]; then
+        echo "Found boot required files, continuing..."
+        irecovery -f ibss.img4
+        irecovery -f ibss.img4
+        irecovery -f ibec.img4
+        irecovery -f devicetree.img4
+        irecovery -c "devicetree"
+        irecovery -f aop.img4
+        irecovery -c "firmware"
+        irecovery -f trustcache.img4
+        irecovery -c "firmware"
+        irecovery -f krnl.img4
+        irecovery -c "bootx"
+        echo "Device should be booting now."
+        echo "Done!"
+    else
+        echo "Required files not found, run script again!"
+    fi
+    
+    exit
 fi
-if [[ -e work ]]; then
- rm -rf work
+
+if [ -d work ]; then
+ rm -rf work/
 fi
+
 mkdir work
 mkdir boot
+
 if [[ "$1" == "" ]]; then
  echo "You forgot an ipsw :P"
  exit
