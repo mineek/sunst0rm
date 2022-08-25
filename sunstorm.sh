@@ -40,7 +40,7 @@ if [ "$1" == "boot" ]; then
         irecovery -c "bootx"
         echo "Device should be booting now."
     else
-        echo "Required files not found, run script again!"
+        echo "Required files not found, run $0 again!"
     fi
     
     echo "Done!"
@@ -49,11 +49,11 @@ fi
 
 _runFuturerestore() {
     echo "================================================================"
-    echo "Using 'futurerestore' command"
-    echo "If command fails reboot into DFU mode, run script again!"
+    echo "              Starting 'futurerestore' command"
+    echo "If command fails reboot into DFU mode, run $0 again!"
     echo ""
-    echo "If command succeeds, reboot into DFU mode again"
-    echo "Run the following command to boot device:"
+    echo "If command succeeds, reboot into DFU mode"
+    echo "Then, run the following command to boot device:"
     echo "$0 boot"
     echo "================================================================"
     read -p "Press ENTER to continue <-"
@@ -103,8 +103,9 @@ fi
 unzip -q $ipsw -x *.dmg -d work
 buildmanifest=$(cat work/BuildManifest.plist)
 firmware=$(/usr/libexec/PlistBuddy -c "Print :ProductVersion" /dev/stdin <<< "$buildmanifest")
-device=$(/usr/libexec/PlistBuddy -c "Print :SupportedProductTypes" /dev/stdin <<< "$buildmanifest")
-device=$(echo $device | grep -oEi "iPod[0-9],1|iPhone[0-9],1|iPad[0-9],1")
+# device=$(/usr/libexec/PlistBuddy -c "Print :SupportedProductTypes" /dev/stdin <<< "$buildmanifest")
+# device=$(echo $device | grep -oEi "iPod[0-9],1|iPhone[0-9],1|iPad[0-9],1")
+device=$(irecovery -q | grep "PRODUCT" | cut -f 2 -d ":" | cut -c 2-)
 echo "Firmware version: $firmware"
 echo "Device: $device"
 tsschecker -d $device -e $ecid --boardconfig $boardconfig -s -l
@@ -131,7 +132,7 @@ else
  trustcache="$(/usr/libexec/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:StaticTrustCache:Info:Path" | sed 's/"//g')"
  img4 -i work/$trustcache -o boot/trustcache.img4 -M IM4M -T rtsc 
  
- if [[ $device == "iPhone8,"* || $device == "iPhone7,"* || $device == "iPhone6,"* ]]; then
+ if [ "$device" == *"iPhone8,"* ] || [ "$device" == *"iPhone7,"* ] || [ "$device" == *"iPhone6,"* ]; then
   echo "Device has kpp"
   kpp=1
  else
@@ -180,18 +181,10 @@ else
  rm work/ramdisk/usr/local/bin/restored_external
  cp work/patched_asr work/ramdisk/usr/sbin/asr
  cp work/patched_restored_external work/ramdisk/usr/local/bin/restored_external
- hdiutil detach work/ramdisk
+ hdiutil detach -force work/ramdisk
  sleep 5
  mkdir restore
  pyimg4 im4p create -i work/ramdisk.dmg -o restore/ramdisk.im4p -f rdsk
- 
- if [[ $device == "iPhone8,"* || $device == "iPhone7,"* || $device == "iPhone6,"* ]]; then
-  echo "Device has kpp"
-  kpp=1
- else
-  echo "Device does not have kpp"
-  kpp=0
- fi
  
  # get kernelcache from buildmanifest
  kernelcache=$(/usr/libexec/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:KernelCache:Info:Path" | sed 's/"//g')
