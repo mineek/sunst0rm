@@ -50,9 +50,10 @@ fi
 _runFuturerestore() {
     echo "================================================================"
     echo "Using 'futurerestore' command"
-    echo "If command fails reboot into DFU mode, run script again!"
+    echo "If command fails reboot into pwnDFU mode, run futurerestore like:"
+    echo "futurerestore -t $shsh --use-pwndfu --skip-blob --rdsk restore/ramdisk.im4p --rkrn restore/krnl.im4p --latest-sep --latest-baseband $restore_ipsw"
     echo ""
-    echo "If command succeeds, reboot into DFU mode again"
+    echo "If command succeeds, reboot into pwnDFU mode again"
     echo "Run the following command to boot device:"
     echo "$0 boot"
     echo "================================================================"
