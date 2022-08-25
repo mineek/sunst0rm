@@ -106,6 +106,7 @@ firmware=$(/usr/libexec/PlistBuddy -c "Print :ProductVersion" /dev/stdin <<< "$b
 # device=$(/usr/libexec/PlistBuddy -c "Print :SupportedProductTypes" /dev/stdin <<< "$buildmanifest")
 # device=$(echo $device | grep -oEi "iPod[0-9],1|iPhone[0-9],1|iPad[0-9],1")
 device=$(irecovery -q | grep "PRODUCT" | cut -f 2 -d ":" | cut -c 2-)
+ecid=$(irecovery -q | grep "ECID" | sed 's/ECID: //')
 echo "Firmware version: $firmware"
 echo "Device: $device"
 tsschecker -d $device -e $ecid --boardconfig $boardconfig -s -l
