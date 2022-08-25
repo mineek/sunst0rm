@@ -1,7 +1,7 @@
 #!/bin/bash
 
 device_dfu=$(irecovery -m | grep -c "DFU")
-
+ecid=$(irecovery -q | grep ECID | sed 's/ECID: //')
 if [ $device_dfu = 0 ]; then
     echo "No device found in DFU mode!"
     exit
