@@ -1,8 +1,8 @@
 #!/bin/bash
 
 device_dfu=$(irecovery -m | grep -c "DFU")
-ecid=$(irecovery -q | grep ECID | sed 's/ECID: //')
-if [ $device_dfu = 0 ]; then
+
+if [ $device_dfu == 0 ]; then
     echo "No device found in DFU mode!"
     exit
 fi
@@ -47,28 +47,13 @@ if [ "$1" == "boot" ]; then
     exit
 fi
 
-# _runFuturerestore() {
-#     echo "================================================================"
-#     echo "              Starting 'futurerestore' command"
-#     echo "If command fails reboot into DFU mode, run $0 again!"
-#     echo ""
-#     echo "If command succeeds, reboot into DFU mode"
-#     echo "Then, run the following command to boot device:"
-#     echo "$0 boot"
-#     echo "================================================================"
-#     read -p "Press ENTER to continue <-"
-#     restore_ipsw=$(cat restore/ipsw_path)
-#     futurerestore -t $shsh --use-pwndfu --skip-blob --rdsk restore/ramdisk.im4p --rkrn restore/krnl.im4p --latest-sep --latest-baseband $restore_ipsw
-#     exit
-# }
 _runFuturerestore() {
     echo "================================================================"
-    echo "Using 'futurerestore' command"
-    echo "If command fails reboot into pwnDFU mode, run futurerestore like:"
-    echo "futurerestore -t $shsh --use-pwndfu --skip-blob --rdsk restore/ramdisk.im4p --rkrn restore/krnl.im4p --latest-sep --latest-baseband $restore_ipsw"
+    echo "              Starting 'futurerestore' command"
+    echo "If command fails reboot into DFU mode, run $0 again!"
     echo ""
-    echo "If command succeeds, reboot into pwnDFU mode again"
-    echo "Run the following command to boot device:"
+    echo "If command succeeds, reboot into DFU mode"
+    echo "Then, run the following command to boot device:"
     echo "$0 boot"
     echo "================================================================"
     read -p "Press ENTER to continue <-"
@@ -118,9 +103,9 @@ fi
 unzip -q $ipsw -x *.dmg -d work
 buildmanifest=$(cat work/BuildManifest.plist)
 firmware=$(/usr/libexec/PlistBuddy -c "Print :ProductVersion" /dev/stdin <<< "$buildmanifest")
-# device=$(/usr/libexec/PlistBuddy -c "Print :SupportedProductTypes" /dev/stdin <<< "$buildmanifest")
-# device=$(echo $device | grep -oEi "iPod[0-9],1|iPhone[0-9],1|iPad[0-9],1")
-device=$(irecovery -q | grep "PRODUCT" | cut -f 2 -d ":" | cut -c 2-)
+device=$(/usr/libexec/PlistBuddy -c "Print :SupportedProductTypes" /dev/stdin <<< "$buildmanifest")
+device=$(echo $device | grep -oEi "iPod[0-9],1|iPhone[0-9],1|iPad[0-9],1")
+# device=$(irecovery -q | grep "PRODUCT" | cut -f 2 -d ":" | cut -c 2-)
 ecid=$(irecovery -q | grep "ECID" | sed 's/ECID: //')
 echo "Firmware version: $firmware"
 echo "Device: $device"
