@@ -2,7 +2,7 @@
 
 device_dfu=$(irecovery -m | grep -c "DFU")
 
-if [ $device_dfu = 0 ]; then
+if [ $device_dfu == 0 ]; then
     echo "No device found in DFU mode!"
     exit
 fi
@@ -117,7 +117,7 @@ ibec=$(awk "/"${boardconfig_without_ap}"/{x=1}x&&/iBEC[.]/{print;exit}" work/Bui
 echo "Found iBEC: $ibec"
 echo "Found iBSS: $ibss"
 
-if [[ -e boot/ibss.img4 ]]; then
+if [ -e boot/ibss.img4 ]; then
  echo "Skipped making boot files."
 else
  gaster decrypt work/Firmware/dfu/$ibec work/decrypted_ibec
@@ -132,7 +132,7 @@ else
  trustcache="$(/usr/libexec/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:StaticTrustCache:Info:Path" | sed 's/"//g')"
  img4 -i work/$trustcache -o boot/trustcache.img4 -M IM4M -T rtsc 
  
- if [ "$device" == *"iPhone8,"* ] || [ "$device" == *"iPhone7,"* ] || [ "$device" == *"iPhone6,"* ]; then
+ if [[ "$device" == *"iPhone8,"* ]] || [[ "$device" == *"iPhone7,"* ]] || [[ "$device" == *"iPhone6,"* ]]; then
   echo "Device has kpp"
   kpp=1
  else
@@ -142,7 +142,7 @@ else
  
  kernelcache=$(/usr/libexec/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:KernelCache:Info:Path" | sed 's/"//g')
  
- if [[ $kpp == 1 ]]; then
+ if [ $kpp == 1 ]; then
   pyimg4 im4p extract -i work/$kernelcache -o work/kcache.raw --extra work/kpp.bin 
  else
   pyimg4 im4p extract -i work/$kernelcache -o work/kcache.raw
@@ -150,7 +150,7 @@ else
  
  Kernel64Patcher work/kcache.raw work/krnl.patched -f
  
- if [[ $kpp == 1 ]]; then
+ if [ $kpp == 1 ]; then
   pyimg4 im4p create -i work/krnl.patched -o boot/krnl.im4p --extra work/kpp.bin -f rkrn --lzss
  else
   pyimg4 im4p create -i work/krnl.patched -o boot/krnl.im4p -f rkrn --lzss
@@ -158,7 +158,7 @@ else
   pyimg4 img4 create -p boot/krnl.im4p -o boot/krnl.img4 -m IM4M
 fi
 
-if [[ -e restore/krnl.im4p ]]; then
+if [ -e restore/krnl.im4p ]; then
  echo "Skipped making restore files."
 else
  ramdisk=$(/usr/libexec/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:RestoreRamDisk:Info:Path" | sed 's/"//g')
@@ -189,7 +189,7 @@ else
  # get kernelcache from buildmanifest
  kernelcache=$(/usr/libexec/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:KernelCache:Info:Path" | sed 's/"//g')
  
- if [[ $kpp == 1 ]]; then
+ if [ $kpp == 1 ]; then
   pyimg4 im4p extract -i work/$kernelcache -o work/kcache.raw --extra work/kpp.bin 
  else
   pyimg4 im4p extract -i work/$kernelcache -o work/kcache.raw
@@ -197,7 +197,7 @@ else
  
  Kernel64Patcher work/kcache.raw work/krnl.patched -f -a
  
- if [[ $kpp == 1 ]]; then
+ if [ $kpp == 1 ]; then
   pyimg4 im4p create -i work/krnl.patched -o restore/krnl.im4p --extra work/kpp.bin -f rkrn --lzss
  else
   pyimg4 im4p create -i work/krnl.patched -o restore/krnl.im4p -f rkrn --lzss
