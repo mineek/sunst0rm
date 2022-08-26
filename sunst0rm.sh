@@ -183,6 +183,7 @@ echo "iBEC: $ibec"
 echo "Making boot files..."
 ./bin/gaster decrypt work/$ibss work/ibss.dec
 ./bin/gaster decrypt work/$ibec work/ibec.dec
+# @TODO: decrypting iBSS/iBEC with gaster is making iBoot64Patcher fail
 ./bin/iBoot64Patcher work/ibss.dec work/ibss.patched
 ./bin/iBoot64Patcher work/ibec.dec work/ibec.patched -b "-v"
 
