@@ -170,7 +170,7 @@ echo "Making boot files..."
 img4tool -e -s $shsh -m IM4M
 img4 -i work/ibss.patched -o boot/ibss.img4 -M IM4M -A -T ibss
 img4 -i work/ibec.patched -o boot/ibec.img4 -M IM4M -A -T ibec
-# @TODO: parse correct filename, BuildManifest as devicetree as array
+# @TODO: parse correct filename, BuildIdentities is of type array makes this complex to deal with
 devicetree=$(plutil -extract 'BuildIdentities.0.Manifest.DeviceTree.Info.Path' xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
 echo "DeviceTree: $devicetree"
 img4 -i work/$devicetree -o boot/devicetree.img4 -M IM4M -T rdtr
