@@ -24,7 +24,7 @@ _usage() {
     cat <<EOF
 ================================================================================
 USAGE:
-    RESTORING: sunst0rm.sh restore <boardconfig> <ipsw_path> 
+    RESTORING: sunst0rm.sh restore <boardconfig> <ipsw path> 
     BOOTING: sunst0rm.sh boot
 ================================================================================
 EOF
@@ -48,7 +48,7 @@ echo "Starting exploit, device should be in pwnd DFU mode after this."
 
 if [ "$1" == "boot" ]; then
     if [ ! -d boot ]; then
-        echo "Run 'sunst0rm.sh restore <boardconfig> <ipsw_path>' command first."
+        echo "Run 'sunst0rm.sh restore <boardconfig> <ipsw path>' command first."
         exit
     fi
     
@@ -84,7 +84,7 @@ _runFuturerestore() {
     echo "================================================================================"
     echo "                      Starting 'futurerestore' command"
     echo "If command fails, reboot into DFU mode."
-    echo "Then, run '$0 $1' command again."
+    echo "Then, run '$0 restore' command again."
     echo ""
     echo "If command succeeds, reboot into DFU mode."
     echo "Then, run '$0 boot' command to boot the device."
