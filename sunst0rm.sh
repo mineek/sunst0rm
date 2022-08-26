@@ -83,11 +83,11 @@ fi
 _runFuturerestore() {
     echo "================================================================================"
     echo "                      Starting 'futurerestore' command"
-    echo "If command fails, reboot into DFU mode, then run $0 $1 again."
+    echo "If command fails, reboot into DFU mode."
+    echo "Then, run '$0 $1' command again."
     echo ""
     echo "If command succeeds, reboot into DFU mode."
-    echo "Then, run the following command to boot device:"
-    echo "$0 boot"
+    echo "Then, run '$0 boot' command to boot the device."
     echo "================================================================================"
     read -p "Press ENTER to continue <-"
     restore_ipsw=$(cat restore/ipsw_path)
