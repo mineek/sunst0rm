@@ -167,4 +167,13 @@ chmod 755 ldid2
 xattr -d com.apple.quarantine ldid2
 fi
 
+if [ ! -e "./tsschecker" ]; then
+echo "tsschecker not found. Downloading..."
+curl --progress-bar -o tsschecker.zip -L https://github.com/tihmstar/tsschecker/releases/download/304/tsschecker_macOS_v304.zip
+unzip tsschecker.zip
+rm tsschecker.zip
+chmod 755 tsschecker
+xattr -d com.apple.quarantine tsschecker
+fi
+
 touch ./.requirements_done
