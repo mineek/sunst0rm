@@ -154,18 +154,18 @@ shsh=$(ls tickets/*.shsh2)
 echo "SigningTicket: $shsh"
 
 
-# @FIX: parse correct filename, BuildIdentities is of type array makes this complex to deal with
+# @FIX: parse correct filename, BuildIdentities is of type array which makes finding device manifest complex to deal with
 manifest_index=0
 ret=0
 until [ $ret != 0 ]; do
-	manifest=$(plutil -extract "BuildIdentities.$manifest_index.Manifest" xml1 -o - work/BuildManifest.plist)
-	ret=$?
-	count_manifest=$(echo $manifest | grep -c "$boardconfig")
-	if [ $count_manifest == 0 ]; then
-		((manifest_index++))
-	else
-		ret=1
-	fi
+manifest=$(plutil -extract "BuildIdentities.$manifest_index.Manifest" xml1 -o - work/BuildManifest.plist)
+ret=$?
+count_manifest=$(echo $manifest | grep -c "$boardconfig")
+if [ $count_manifest == 0 ]; then
+	((manifest_index++))
+else
+	ret=1
+fi
 done
 
 # _extractFromManifest() 
