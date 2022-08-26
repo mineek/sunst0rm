@@ -19,7 +19,8 @@ else
     exit
 fi
 
-_usage() {
+_usage() 
+{
     cat <<EOF
 ================================================================================
 USAGE:
@@ -79,7 +80,8 @@ if [ "$1" != "restore" ]; then
     exit
 fi
 
-_runFuturerestore() {
+_runFuturerestore() 
+{
     echo "================================================================================"
     echo "                      Starting 'futurerestore' command"
     echo "If futurerestore fails, reboot into DFU mode."
@@ -156,6 +158,11 @@ fi
 ./bin/tsschecker -d $device -e $ecid --boardconfig $boardconfig -s -l --save-path tickets/
 shsh=$(ls tickets/*.shsh2)
 echo "SigningTicket: $shsh"
+
+# _extractFromManifest() 
+# {
+#     $(plutil -extract "BuildIdentities.0.Manifest.$1.Info.Path" xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
+# }
 
 ibss=$(plutil -extract 'BuildIdentities.0.Manifest.iBSS.Info.Path' xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
 ibec=$(plutil -extract 'BuildIdentities.0.Manifest.iBEC.Info.Path' xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
