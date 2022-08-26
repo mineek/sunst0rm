@@ -12,7 +12,6 @@ fi
 ./requirements.sh
 
 if [ -a .requirements_done ]; then
-    rm .requirements_done
     clear
 else
     echo "Run \$ ./requirements.sh"
