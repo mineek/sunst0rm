@@ -31,9 +31,9 @@ if [ -z "$1" ]; then
     echo "No argument provided."
     cat <<EOF
 ================================================================================
-    USAGE:
-        RESTORING: sunstorm.sh <path_to_ipsw> <boardconfig>
-        BOOTING: sunstorm.sh boot
+USAGE:
+    RESTORING: sunstorm.sh <path_to_ipsw> <boardconfig>
+    BOOTING: sunstorm.sh boot
 ================================================================================
 EOF
     exit
@@ -160,6 +160,7 @@ else
  trustcache="$(/usr/libexec/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:StaticTrustCache:Info:Path" | sed 's/"//g')"
  img4 -i work/$trustcache -o boot/trustcache.img4 -M IM4M -T rtsc 
  
+ # @TODO: and where is kpp.bin
  if [[ "$device" == *"iPhone8,"* ]] || [[ "$device" == *"iPhone7,"* ]] || [[ "$device" == *"iPhone6,"* ]]; then
   echo "Device has kpp"
   kpp=1
