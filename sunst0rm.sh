@@ -85,7 +85,7 @@ _runFuturerestore() {
     echo "If futurerestore fails, reboot into DFU mode."
     echo "Then, run '$0 restore' again."
     echo ""
-    echo "If futurestore succeeds, reboot into DFU mode."
+    echo "If futurerestore succeeds, reboot into DFU mode."
     echo "Then, run '$0 boot' to boot the device."
     echo "================================================================================"
     read -p "Press ENTER to continue <-"
