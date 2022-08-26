@@ -239,12 +239,12 @@ cp work/ramdisk/usr/local/bin/restored_external work/restored_external
 ./bin/restored_external64_patcher work/restored_external work/patched_restored_external
 ./bin/ldid2 -e work/restored_external > work/restored_external.plist
 ./bin/ldid2 -Swork/restored_external.plist work/patched_restored_external
-chmod -R 755 work/patched_restored_external
-chmod -R 755 work/patched_asr
+chmod 755 work/patched_restored_external
+chmod 755 work/patched_asr
 rm work/ramdisk/usr/sbin/asr
 rm work/ramdisk/usr/local/bin/restored_external
-cp work/patched_asr work/ramdisk/usr/sbin/asr
-cp work/patched_restored_external work/ramdisk/usr/local/bin/restored_external
+mv work/patched_asr work/ramdisk/usr/sbin/asr
+mv work/patched_restored_external work/ramdisk/usr/local/bin/restored_external
 hdiutil detach -force work/ramdisk
 sleep 5
 
