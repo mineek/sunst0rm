@@ -32,8 +32,8 @@ if [ -z "$1" ]; then
     cat <<EOF
 ================================================================================
 USAGE:
-    RESTORING: sunstorm.sh <path_to_ipsw> <boardconfig>
-    BOOTING: sunstorm.sh boot
+    RESTORING: sunst0rm.sh <path_to_ipsw> <boardconfig>
+    BOOTING: sunst0rm.sh boot
 ================================================================================
 EOF
     exit
@@ -44,7 +44,7 @@ echo "Starting exploit, device should be in pwnd DFU mode after this."
 
 if [ "$1" == "boot" ]; then
     if [ ! -d boot ]; then
-        echo "Run 'sunstorm.sh <path_to_ipsw> <boardconfig>' command first."
+        echo "Run 'sunst0rm.sh <path_to_ipsw> <boardconfig>' command first."
         exit
     fi
     
@@ -64,8 +64,6 @@ if [ "$1" == "boot" ]; then
         irecovery -f krnl.img4
         irecovery -c "bootx"
         echo "Device should be booting now."
-    else
-        echo "Required files not found, run sunstorm.sh again."
     fi
     
     echo "Done!"
