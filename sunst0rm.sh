@@ -122,14 +122,19 @@ boardconfig=$2
 ipsw=$3
 
 if [ -z "$boardconfig" ]; then
- echo "You forgot an boardconfig :P"
+ echo "boardconfig is required to continue."
  exit
 fi
 
-if [ -e $ipsw ] || [ ${ipsw: -5} == ".ipsw" ]; then
+if [ -z "$ipsw" ]; then
+  echo "ipsw is required to continue."
+  exit
+fi
+
+if [ -a $ipsw ] || [ ${ipsw: -5} == ".ipsw" ]; then
 echo "Continuing..."
 else
-echo "You forgot an ipsw :P"
+echo "Failed to validate ipsw file."
 exit
 fi
 
