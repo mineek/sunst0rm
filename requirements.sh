@@ -176,4 +176,5 @@ chmod 755 tsschecker
 xattr -d com.apple.quarantine tsschecker
 fi
 
-touch ./.requirements_done
+cd ../
+touch .requirements_done
