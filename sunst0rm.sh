@@ -133,14 +133,20 @@ exit
 fi
 
 unzip -q $ipsw -x *.dmg -d work
-buildmanifest=$(cat work/BuildManifest.plist)
-firmware=$(/usr/libexec/PlistBuddy -c "Print :ProductVersion" /dev/stdin <<< "$buildmanifest")
-device=$(/usr/libexec/PlistBuddy -c "Print :SupportedProductTypes" /dev/stdin <<< "$buildmanifest")
-device=$(echo $device | grep -oEi "iPod[0-9],1|iPhone[0-9],1|iPad[0-9],1")
-# device=$(irecovery -q | grep "PRODUCT" | cut -f 2 -d ":" | cut -c 2-)
+
+# buildmanifest=$(cat work/BuildManifest.plist)
+# firmware=$(/usr/libexec/PlistBuddy -c "Print :ProductVersion" /dev/stdin <<< "$buildmanifest")
+
+# @NOTE: because SupportedProductTypes is of type array device cannot be retreived from buildmanifest 
+# device=$(/usr/libexec/PlistBuddy -c "Print :SupportedProductTypes" /dev/stdin <<< "$buildmanifest")
+# device=$(echo $device | grep -oEi "iPod[0-9],1|iPhone[0-9],1|iPad[0-9],1")
+
+firmware=$(plutil -extract 'ProductVersion' xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
+# @TODO: ensure correct irecovery version is installed
+device=$(irecovery -q | grep "PRODUCT" | cut -f 2 -d ":" | cut -c 2-)
 ecid=$(irecovery -q | grep "ECID" | sed 's/ECID: //')
 echo "Firmware version: $firmware"
-echo "Device: $device"
+echo "Found device: $device"
 
 if [ ! -d tickets ]; then
     mkdir tickets
@@ -173,6 +179,7 @@ else
  img4 -i work/$trustcache -o boot/trustcache.img4 -M IM4M -T rtsc 
  
  # @TODO: and where is kpp.bin
+ # @TODO: add kpp for legacy devices support
  if [[ "$device" == *"iPhone8,"* ]] || [[ "$device" == *"iPhone7,"* ]] || [[ "$device" == *"iPhone6,"* ]]; then
   echo "Device has kpp"
   kpp=1
