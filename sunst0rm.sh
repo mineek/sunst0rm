@@ -134,17 +134,16 @@ fi
 
 unzip -q $ipsw -x *.dmg -d work
 
+# @TODO: ensure correct irecovery version is installed
+device=$(irecovery -q | grep "PRODUCT" | cut -f 2 -d ":" | cut -c 2-)
+ecid=$(irecovery -q | grep "ECID" | sed 's/ECID: //')
+firmware=$(plutil -extract 'ProductVersion' xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
 # buildmanifest=$(cat work/BuildManifest.plist)
 # firmware=$(/usr/libexec/PlistBuddy -c "Print :ProductVersion" /dev/stdin <<< "$buildmanifest")
 
 # @NOTE: because SupportedProductTypes is of type array device cannot be retreived from buildmanifest 
 # device=$(/usr/libexec/PlistBuddy -c "Print :SupportedProductTypes" /dev/stdin <<< "$buildmanifest")
 # device=$(echo $device | grep -oEi "iPod[0-9],1|iPhone[0-9],1|iPad[0-9],1")
-
-firmware=$(plutil -extract 'ProductVersion' xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
-# @TODO: ensure correct irecovery version is installed
-device=$(irecovery -q | grep "PRODUCT" | cut -f 2 -d ":" | cut -c 2-)
-ecid=$(irecovery -q | grep "ECID" | sed 's/ECID: //')
 echo "Firmware version: $firmware"
 echo "Found device: $device"
 
@@ -156,32 +155,35 @@ fi
 
 ./bin/tsschecker -d $device -e $ecid --boardconfig $boardconfig -s -l --save-path tickets/
 shsh=$(ls tickets/*.shsh2)
-echo "Found shsh: $shsh"
+echo "SigningTicket: $shsh"
 
-boardconfig_without_ap=$(echo $boardconfig | sed 's/ap//g')
-
-ibss=$(plutil -extract 'BuildIdentities.0.Manifest.iBSS.Info.Path' xml1 -o - BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
-ibec=$(plutil -extract 'BuildIdentities.0.Manifest.iBEC.Info.Path' xml1 -o - BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
+ibss=$(plutil -extract 'BuildIdentities.0.Manifest.iBSS.Info.Path' xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
+ibec=$(plutil -extract 'BuildIdentities.0.Manifest.iBEC.Info.Path' xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
 echo "iBSS: $ibss"
 echo "iBEC: $ibec"
 
-if [ -e boot/ibss.img4 ]; then
- echo "Skipped making boot files."
-else
- ./bin/gaster decrypt work/$ibss work/ibss.dec
- ./bin/gaster decrypt work/$ibec work/ibec.dec
- ./bin/iBoot64Patcher work/ibss.dec work/ibss.patched
- ./bin/iBoot64Patcher work/ibec.dec work/ibec.patched -b "-v"
- img4tool -e -s $shsh -m IM4M
- img4 -i work/ibss.patched -o boot/ibss.img4 -M IM4M -A -T ibss
- img4 -i work/ibec.patched -o boot/ibec.img4 -M IM4M -A -T ibec
- devicetree=$(awk "/"${boardconfig_without_ap}"/{x=1}x&&/DeviceTree[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]dfu[/]//')
- img4 -i work/$devicetree -o boot/devicetree.img4 -M IM4M -T rdtr
- trustcache="$(/usr/libexec/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:StaticTrustCache:Info:Path" | sed 's/"//g')"
- img4 -i work/$trustcache -o boot/trustcache.img4 -M IM4M -T rtsc 
- 
- # @TODO: and where is kpp.bin
- # @TODO: add kpp for legacy devices support
+echo "Making boot files..."
+./bin/gaster decrypt work/$ibss work/ibss.dec
+./bin/gaster decrypt work/$ibec work/ibec.dec
+./bin/iBoot64Patcher work/ibss.dec work/ibss.patched
+./bin/iBoot64Patcher work/ibec.dec work/ibec.patched -b "-v"
+img4tool -e -s $shsh -m IM4M
+img4 -i work/ibss.patched -o boot/ibss.img4 -M IM4M -A -T ibss
+img4 -i work/ibec.patched -o boot/ibec.img4 -M IM4M -A -T ibec
+# @TODO: parse correct filename, BuildManifest as devicetree as array
+devicetree=$(plutil -extract 'BuildIdentities.0.Manifest.DeviceTree.Info.Path' xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
+echo "DeviceTree: $devicetree"
+img4 -i work/$devicetree -o boot/devicetree.img4 -M IM4M -T rdtr
+#  restore_trustcache=$(plutil -extract 'BuildIdentities.0.Manifest.RestoreTrustCache.Info.Path' xml1 -o - BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
+trustcache=$(plutil -extract 'BuildIdentities.0.Manifest.StaticTrustCache.Info.Path' xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
+echo "StaticTrustCache: $trustcache"
+img4 -i work/$trustcache -o boot/trustcache.img4 -M IM4M -T rtsc 
+kernelcache=$(plutil -extract 'BuildIdentities.0.Manifest.KernelCache.Info.Path' xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
+echo "KernelCache: $kernelcache"
+
+kpp=0
+# @TODO: and where is kpp.bin
+# @TODO: add kpp for legacy devices support
 #  if [[ "$device" == *"iPhone8,"* ]] || [[ "$device" == *"iPhone7,"* ]] || [[ "$device" == *"iPhone6,"* ]]; then
 #   echo "Device has kpp"
 #   kpp=1
@@ -189,73 +191,66 @@ else
 #   echo "Device does not have kpp"
 #   kpp=0
 #  fi
- 
- kpp=0
- 
- kernelcache=$(/usr/libexec/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:KernelCache:Info:Path" | sed 's/"//g')
- 
- if [ $kpp == 1 ]; then
-  pyimg4 im4p extract -i work/$kernelcache -o work/kcache.raw --extra work/kpp.bin 
- else
-  pyimg4 im4p extract -i work/$kernelcache -o work/kcache.raw
- fi
- 
- ./bin/Kernel64Patcher work/kcache.raw work/krnl.patched -f
- 
- if [ $kpp == 1 ]; then
-  pyimg4 im4p create -i work/krnl.patched -o boot/krnl.im4p --extra work/kpp.bin -f rkrn --lzss
- else
-  pyimg4 im4p create -i work/krnl.patched -o boot/krnl.im4p -f rkrn --lzss
- fi
-  pyimg4 img4 create -p boot/krnl.im4p -o boot/krnl.img4 -m IM4M
+
+if [ $kpp == 1 ]; then
+pyimg4 im4p extract -i work/$kernelcache -o work/kcache.dec --extra work/kpp.bin 
+else
+pyimg4 im4p extract -i work/$kernelcache -o work/kcache.dec
 fi
 
-if [ -e restore/krnl.im4p ]; then
- echo "Skipped making restore files."
+./bin/Kernel64Patcher work/kcache.dec work/kcache.patched -f
+
+if [ $kpp == 1 ]; then
+pyimg4 im4p create -i work/kcache.patched -o boot/krnl.im4p --extra work/kpp.bin -f rkrn --lzss
 else
- ramdisk=$(/usr/libexec/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:RestoreRamDisk:Info:Path" | sed 's/"//g')
- echo "Found ramdisk: $ramdisk"
- unzip -q $ipsw $ramdisk -d work
- img4 -i work/$ramdisk -o work/ramdisk.dmg
- mkdir work/ramdisk
- hdiutil attach work/ramdisk.dmg -mountpoint work/ramdisk
- sleep 5
- ./bin/asr64_patcher work/ramdisk/usr/sbin/asr work/patched_asr
- ./bin/ldid2 -e work/ramdisk/usr/sbin/asr > work/asr.plist
- ./bin/ldid2 -Swork/asr.plist work/patched_asr
- cp work/ramdisk/usr/local/bin/restored_external work/restored_external
- ./bin/restored_external64_patcher work/restored_external work/patched_restored_external
- ./bin/ldid2 -e work/restored_external > work/restored_external.plist
- ./bin/ldid2 -Swork/restored_external.plist work/patched_restored_external
- chmod -R 755 work/patched_restored_external
- chmod -R 755 work/patched_asr
- rm work/ramdisk/usr/sbin/asr
- rm work/ramdisk/usr/local/bin/restored_external
- cp work/patched_asr work/ramdisk/usr/sbin/asr
- cp work/patched_restored_external work/ramdisk/usr/local/bin/restored_external
- hdiutil detach -force work/ramdisk
- sleep 5
- mkdir restore
- pyimg4 im4p create -i work/ramdisk.dmg -o restore/ramdisk.im4p -f rdsk
- 
- # get kernelcache from buildmanifest
- kernelcache=$(/usr/libexec/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:KernelCache:Info:Path" | sed 's/"//g')
- 
- if [ $kpp == 1 ]; then
-  pyimg4 im4p extract -i work/$kernelcache -o work/kcache.raw --extra work/kpp.bin 
- else
-  pyimg4 im4p extract -i work/$kernelcache -o work/kcache.raw
- fi
- 
- ./bin/Kernel64Patcher work/kcache.raw work/krnl.patched -f -a
- 
- if [ $kpp == 1 ]; then
-  pyimg4 im4p create -i work/krnl.patched -o restore/krnl.im4p --extra work/kpp.bin -f rkrn --lzss
- else
-  pyimg4 im4p create -i work/krnl.patched -o restore/krnl.im4p -f rkrn --lzss
- fi
- 
- echo "Continuing to futurerestore..."
- echo $ipsw > restore/ipsw_path
- _runFuturerestore
+pyimg4 im4p create -i work/kcache.patched -o boot/krnl.im4p -f rkrn --lzss
 fi
+
+pyimg4 img4 create -p boot/krnl.im4p -o boot/krnl.img4 -m IM4M
+rm work/kcache.patched
+echo "Done with boot files, making restore files..."
+ramdisk=$(plutil -extract 'BuildIdentities.0.Manifest.RestoreRamDisk.Info.Path' xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
+echo "RestoreRamDisk: $ramdisk"
+unzip -q $ipsw $ramdisk -d work
+img4 -i work/$ramdisk -o work/ramdisk.dmg
+mkdir work/ramdisk
+hdiutil attach work/ramdisk.dmg -mountpoint work/ramdisk
+sleep 5
+./bin/asr64_patcher work/ramdisk/usr/sbin/asr work/patched_asr
+./bin/ldid2 -e work/ramdisk/usr/sbin/asr > work/asr.plist
+./bin/ldid2 -Swork/asr.plist work/patched_asr
+cp work/ramdisk/usr/local/bin/restored_external work/restored_external
+./bin/restored_external64_patcher work/restored_external work/patched_restored_external
+./bin/ldid2 -e work/restored_external > work/restored_external.plist
+./bin/ldid2 -Swork/restored_external.plist work/patched_restored_external
+chmod -R 755 work/patched_restored_external
+chmod -R 755 work/patched_asr
+rm work/ramdisk/usr/sbin/asr
+rm work/ramdisk/usr/local/bin/restored_external
+cp work/patched_asr work/ramdisk/usr/sbin/asr
+cp work/patched_restored_external work/ramdisk/usr/local/bin/restored_external
+hdiutil detach -force work/ramdisk
+sleep 5
+
+mkdir restore
+pyimg4 im4p create -i work/ramdisk.dmg -o restore/ramdisk.im4p -f rdsk
+
+# kernelcache=$(plutil -extract 'BuildIdentities.0.Manifest.KernelCache.Info.Path' xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
+# restore_kernelcache=$(plutil -extract 'BuildIdentities.0.Manifest.RestoreKernelCache.Info.Path' xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
+# if [ $kpp == 1 ]; then
+# pyimg4 im4p extract -i work/$kernelcache -o work/kcache.raw --extra work/kpp.bin 
+# else
+# pyimg4 im4p extract -i work/$kernelcache -o work/kcache.raw
+# fi
+
+./bin/Kernel64Patcher work/kcache.dec work/kcache.patched -f -a
+
+if [ $kpp == 1 ]; then
+pyimg4 im4p create -i work/kcache.patched -o restore/krnl.im4p --extra work/kpp.bin -f rkrn --lzss
+else
+pyimg4 im4p create -i work/kcache.patched -o restore/krnl.im4p -f rkrn --lzss
+fi
+
+echo "Continuing to futurerestore..."
+echo $ipsw > restore/ipsw_path
+_runFuturerestore
