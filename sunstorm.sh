@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ "$(uname)" != "Darwin" ]; then
+    echo "OS not supported."
+    exit
+fi
+
 device_dfu=$(irecovery -m | grep -c "DFU")
 
 if [ $device_dfu == 0 ]; then
