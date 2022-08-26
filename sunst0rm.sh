@@ -180,13 +180,15 @@ else
  
  # @TODO: and where is kpp.bin
  # @TODO: add kpp for legacy devices support
- if [[ "$device" == *"iPhone8,"* ]] || [[ "$device" == *"iPhone7,"* ]] || [[ "$device" == *"iPhone6,"* ]]; then
-  echo "Device has kpp"
-  kpp=1
- else
-  echo "Device does not have kpp"
-  kpp=0
- fi
+#  if [[ "$device" == *"iPhone8,"* ]] || [[ "$device" == *"iPhone7,"* ]] || [[ "$device" == *"iPhone6,"* ]]; then
+#   echo "Device has kpp"
+#   kpp=1
+#  else
+#   echo "Device does not have kpp"
+#   kpp=0
+#  fi
+ 
+ kpp=0
  
  kernelcache=$(/usr/libexec/PlistBuddy work/BuildManifest.plist -c "Print BuildIdentities:0:Manifest:KernelCache:Info:Path" | sed 's/"//g')
  
