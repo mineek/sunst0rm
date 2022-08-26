@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ "$(uname)" != "Darwin" ]; then
-    echo "OS not supported."
+    echo "Only macOS is supported."
     exit
 fi
 
