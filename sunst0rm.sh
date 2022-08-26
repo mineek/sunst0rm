@@ -16,7 +16,23 @@ fi
 if [ -a .requirements_done ]; then
     clear
 else
-    echo "Run $(pwd)/requirements.sh script first."
+    echo "Run $(pwd)/requirements.sh"
+    exit
+fi
+
+_usage() {
+    cat <<EOF
+================================================================================
+USAGE:
+    RESTORING: sunst0rm.sh restore <boardconfig> <ipsw_path> 
+    BOOTING: sunst0rm.sh boot
+================================================================================
+EOF
+}
+
+if [ -z "$1" ]; then
+    echo "No argument provided."
+    _usage
     exit
 fi
 
@@ -27,24 +43,12 @@ if [ $device_dfu == 0 ]; then
     exit
 fi
 
-if [ -z "$1" ]; then
-    echo "No argument provided."
-    cat <<EOF
-================================================================================
-USAGE:
-    RESTORING: sunst0rm.sh <path_to_ipsw> <boardconfig>
-    BOOTING: sunst0rm.sh boot
-================================================================================
-EOF
-    exit
-fi
-
 echo "Starting exploit, device should be in pwnd DFU mode after this."
 ./bin/gaster pwn
 
 if [ "$1" == "boot" ]; then
     if [ ! -d boot ]; then
-        echo "Run 'sunst0rm.sh <path_to_ipsw> <boardconfig>' command first."
+        echo "Run 'sunst0rm.sh restore <boardconfig> <ipsw_path>' command first."
         exit
     fi
     
@@ -70,12 +74,18 @@ if [ "$1" == "boot" ]; then
     exit
 fi
 
+if [ "$1" != "restore" ]; then
+    echo "Use either 'sunst0rm.sh restore' or 'sunst0rm.sh boot' command."
+    _usage
+    exit
+fi
+
 _runFuturerestore() {
     echo "================================================================================"
     echo "                      Starting 'futurerestore' command"
-    echo "If command fails reboot into DFU mode, run $0 again."
+    echo "If command fails, reboot into DFU mode, then run $0 $1 again."
     echo ""
-    echo "If command succeeds, reboot into DFU mode"
+    echo "If command succeeds, reboot into DFU mode."
     echo "Then, run the following command to boot device:"
     echo "$0 boot"
     echo "================================================================================"
@@ -108,19 +118,19 @@ fi
 mkdir work
 mkdir boot
 
-ipsw=$1
 boardconfig=$2
+ipsw=$3
+
+if [ -z "$boardconfig" ]; then
+ echo "You forgot an boardconfig :P"
+ exit
+fi
 
 if [ -e $ipsw ] || [ ${ipsw: -5} == ".ipsw" ]; then
 echo "Continuing..."
 else
 echo "You forgot an ipsw :P"
 exit
-fi
-
-if [ -z "$boardconfig" ]; then
- echo "You forgot an boardconfig :P"
- exit
 fi
 
 unzip -q $ipsw -x *.dmg -d work
@@ -132,10 +142,15 @@ device=$(echo $device | grep -oEi "iPod[0-9],1|iPhone[0-9],1|iPad[0-9],1")
 ecid=$(irecovery -q | grep "ECID" | sed 's/ECID: //')
 echo "Firmware version: $firmware"
 echo "Device: $device"
-rm *.shsh*
-# @TODO: add tsschecker to requirements.sh
-tsschecker -d $device -e $ecid --boardconfig $boardconfig -s -l
-shsh=$(ls *.shsh2)
+
+if [ ! -d tickets ]; then
+    mkdir tickets
+else
+    rm -f tickets/*
+fi
+
+./bin/tsschecker -d $device -e $ecid --boardconfig $boardconfig -s -l --save-path tickets/
+shsh=$(ls tickets/*.shsh2)
 echo "Found shsh: $shsh"
 boardconfig_without_ap=$(echo $boardconfig | sed 's/ap//g')
 ibss=$(awk "/"${boardconfig_without_ap}"/{x=1}x&&/iBSS[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]dfu[/]//')
