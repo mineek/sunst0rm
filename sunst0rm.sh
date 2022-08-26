@@ -192,8 +192,8 @@ img4 -i work/ibec.patched -o boot/ibec.img4 -M IM4M -A -T ibec
 devicetree=$(_extractFromManifest "DeviceTree")
 echo "DeviceTree: $devicetree"
 img4 -i work/$devicetree -o boot/devicetree.img4 -M IM4M -T rdtr
-# restore_trustcache==$(_extractFromManifest "RestoreTrustCache")
-trustcache==$(_extractFromManifest "StaticTrustCache")
+# restore_trustcache=$(_extractFromManifest "RestoreTrustCache")
+trustcache=$(_extractFromManifest "StaticTrustCache")
 echo "StaticTrustCache: $trustcache"
 img4 -i work/$trustcache -o boot/trustcache.img4 -M IM4M -T rtsc 
 kernelcache=$(_extractFromManifest "KernelCache")
