@@ -157,19 +157,21 @@ fi
 ./bin/tsschecker -d $device -e $ecid --boardconfig $boardconfig -s -l --save-path tickets/
 shsh=$(ls tickets/*.shsh2)
 echo "Found shsh: $shsh"
+
 boardconfig_without_ap=$(echo $boardconfig | sed 's/ap//g')
-ibss=$(awk "/"${boardconfig_without_ap}"/{x=1}x&&/iBSS[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]dfu[/]//')
-ibec=$(awk "/"${boardconfig_without_ap}"/{x=1}x&&/iBEC[.]/{print;exit}" work/BuildManifest.plist | grep '<string>' |cut -d\> -f2 |cut -d\< -f1 | sed 's/Firmware[/]dfu[/]//')
-echo "Found iBEC: $ibec"
-echo "Found iBSS: $ibss"
+
+ibss=$(plutil -extract 'BuildIdentities.0.Manifest.iBSS.Info.Path' xml1 -o - BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
+ibec=$(plutil -extract 'BuildIdentities.0.Manifest.iBEC.Info.Path' xml1 -o - BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
+echo "iBSS: $ibss"
+echo "iBEC: $ibec"
 
 if [ -e boot/ibss.img4 ]; then
  echo "Skipped making boot files."
 else
- ./bin/gaster decrypt work/Firmware/dfu/$ibec work/decrypted_ibec
- ./bin/gaster decrypt work/Firmware/dfu/$ibss work/decrypted_ibss
- ./bin/iBoot64Patcher work/decrypted_ibss work/ibss.patched
- ./bin/iBoot64Patcher work/decrypted_ibec work/ibec.patched -b "-v"
+ ./bin/gaster decrypt work/$ibss work/ibss.dec
+ ./bin/gaster decrypt work/$ibec work/ibec.dec
+ ./bin/iBoot64Patcher work/ibss.dec work/ibss.patched
+ ./bin/iBoot64Patcher work/ibec.dec work/ibec.patched -b "-v"
  img4tool -e -s $shsh -m IM4M
  img4 -i work/ibss.patched -o boot/ibss.img4 -M IM4M -A -T ibss
  img4 -i work/ibec.patched -o boot/ibec.img4 -M IM4M -A -T ibec
