@@ -42,7 +42,7 @@ if [ $device_dfu == 0 ]; then
     exit
 fi
 
-_runGaster() {
+_pwnDevice() {
 echo "Starting exploit, device should be in pwnd DFU mode after this."
 ./bin/gaster pwn
 }
@@ -53,7 +53,7 @@ if [ "$1" == "boot" ]; then
         exit
     fi
     
-    _runGaster
+    _pwnDevice
     cd boot
     
     if [ -e ibss.img4 ]; then
@@ -102,6 +102,7 @@ if [ -d restore ]; then
     read yn
     
     if [ "$yn" == "y" ]; then
+    	_pwnDevice
         echo "Continuing to futurerestore..."
         _runFuturerestore
     fi
@@ -276,7 +277,7 @@ else
 pyimg4 im4p create -i work/kcache.patched -o restore/krnl.im4p -f rkrn --lzss
 fi
 
-_runGaster
+_pwnDevice
 echo "Continuing to futurerestore..."
 cp $shsh tickets/blob.shsh2
 echo $ipsw > restore/ipsw
