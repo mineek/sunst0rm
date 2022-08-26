@@ -5,6 +5,21 @@ if [ "$(uname)" != "Darwin" ]; then
     exit
 fi
 
+rm .requirements_done
+
+if [ ! -x requirements.sh ]; then
+    chmod +x requirements.sh
+fi
+
+./requirements.sh
+
+if [ -a .requirements_done ]; then
+    clear
+else
+    echo "Run $(pwd)/requirements.sh script first!"
+    exit
+fi
+
 device_dfu=$(irecovery -m | grep -c "DFU")
 
 if [ $device_dfu == 0 ]; then
@@ -20,7 +35,9 @@ if [ -z "$1" ]; then
     exit
 fi
 
+cd bin
 gaster pwn
+cd ..
 
 if [ "$1" == "boot" ]; then
     if [ ! -d boot ]; then
@@ -114,6 +131,8 @@ device=$(echo $device | grep -oEi "iPod[0-9],1|iPhone[0-9],1|iPad[0-9],1")
 ecid=$(irecovery -q | grep "ECID" | sed 's/ECID: //')
 echo "Firmware version: $firmware"
 echo "Device: $device"
+rm *.shsh*
+# @TODO: add tsschecker to requirements.sh
 tsschecker -d $device -e $ecid --boardconfig $boardconfig -s -l
 shsh=$(ls *.shsh2)
 echo "Found shsh: $shsh"
@@ -126,10 +145,10 @@ echo "Found iBSS: $ibss"
 if [ -e boot/ibss.img4 ]; then
  echo "Skipped making boot files."
 else
- gaster decrypt work/Firmware/dfu/$ibec work/decrypted_ibec
- gaster decrypt work/Firmware/dfu/$ibss work/decrypted_ibss
- iBoot64Patcher work/decrypted_ibss work/ibss.patched
- iBoot64Patcher work/decrypted_ibec work/ibec.patched -b "-v"
+ ./bin/gaster decrypt work/Firmware/dfu/$ibec work/decrypted_ibec
+ ./bin/gaster decrypt work/Firmware/dfu/$ibss work/decrypted_ibss
+ ./bin/iBoot64Patcher work/decrypted_ibss work/ibss.patched
+ ./bin/iBoot64Patcher work/decrypted_ibec work/ibec.patched -b "-v"
  img4tool -e -s $shsh -m IM4M
  img4 -i work/ibss.patched -o boot/ibss.img4 -M IM4M -A -T ibss
  img4 -i work/ibec.patched -o boot/ibec.img4 -M IM4M -A -T ibec
@@ -154,7 +173,7 @@ else
   pyimg4 im4p extract -i work/$kernelcache -o work/kcache.raw
  fi
  
- Kernel64Patcher work/kcache.raw work/krnl.patched -f
+ ./bin/Kernel64Patcher work/kcache.raw work/krnl.patched -f
  
  if [ $kpp == 1 ]; then
   pyimg4 im4p create -i work/krnl.patched -o boot/krnl.im4p --extra work/kpp.bin -f rkrn --lzss
@@ -174,13 +193,13 @@ else
  mkdir work/ramdisk
  hdiutil attach work/ramdisk.dmg -mountpoint work/ramdisk
  sleep 5
- asr64_patcher work/ramdisk/usr/sbin/asr work/patched_asr
- ldid -e work/ramdisk/usr/sbin/asr > work/asr.plist
- ldid -Swork/asr.plist work/patched_asr
+ ./bin/asr64_patcher work/ramdisk/usr/sbin/asr work/patched_asr
+ ./bin/ldid2 -e work/ramdisk/usr/sbin/asr > work/asr.plist
+ ./bin/ldid2 -Swork/asr.plist work/patched_asr
  cp work/ramdisk/usr/local/bin/restored_external work/restored_external
- restored_external64_patcher work/restored_external work/patched_restored_external
- ldid -e work/restored_external > work/restored_external.plist
- ldid -Swork/restored_external.plist work/patched_restored_external
+ ./bin/restored_external64_patcher work/restored_external work/patched_restored_external
+ ./bin/ldid2 -e work/restored_external > work/restored_external.plist
+ ./bin/ldid2 -Swork/restored_external.plist work/patched_restored_external
  chmod -R 755 work/patched_restored_external
  chmod -R 755 work/patched_asr
  rm work/ramdisk/usr/sbin/asr
@@ -201,7 +220,7 @@ else
   pyimg4 im4p extract -i work/$kernelcache -o work/kcache.raw
  fi
  
- Kernel64Patcher work/kcache.raw work/krnl.patched -f -a
+ ./bin/Kernel64Patcher work/kcache.raw work/krnl.patched -f -a
  
  if [ $kpp == 1 ]; then
   pyimg4 im4p create -i work/krnl.patched -o restore/krnl.im4p --extra work/kpp.bin -f rkrn --lzss
