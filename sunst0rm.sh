@@ -5,8 +5,6 @@ if [ "$(uname)" != "Darwin" ]; then
     exit
 fi
 
-rm .requirements_done
-
 if [ ! -x requirements.sh ]; then
     chmod +x requirements.sh
 fi
@@ -14,6 +12,7 @@ fi
 ./requirements.sh
 
 if [ -a .requirements_done ]; then
+    rm .requirements_done
     clear
 else
     echo "Run $(pwd)/requirements.sh"
