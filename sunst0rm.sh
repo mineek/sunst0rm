@@ -22,9 +22,9 @@ _usage()
 {
     cat <<EOF
 ================================================================================
-USAGE:
-    RESTORING: sunst0rm.sh restore <boardconfig> <ipsw path> 
-    BOOTING: sunst0rm.sh boot
+Usage:
+    Restoring: sunst0rm.sh restore <boardconfig> <ipsw path> 
+    Booting: sunst0rm.sh boot
 ================================================================================
 EOF
 }
