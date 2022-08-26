@@ -90,8 +90,7 @@ _runFuturerestore()
     echo "Then, run '$0 boot' to boot the device."
     echo "================================================================================"
     read -p "Press ENTER to continue <-"
-    restore_ipsw=$(cat restore/ipsw_path)
-    futurerestore -t $shsh --use-pwndfu --skip-blob --rdsk restore/ramdisk.im4p --rkrn restore/krnl.im4p --latest-sep --latest-baseband $restore_ipsw
+    futurerestore -t tickets/blob.shsh2 --use-pwndfu --skip-blob --rdsk restore/ramdisk.im4p --rkrn restore/krnl.im4p --latest-sep --latest-baseband $(cat restore/ipsw_path)
     exit
 }
 
@@ -186,6 +185,11 @@ echo "Making boot files..."
 ./bin/gaster decrypt work/$ibec work/ibec.dec
 ./bin/iBoot64Patcher work/ibss.dec work/ibss.patched
 ./bin/iBoot64Patcher work/ibec.dec work/ibec.patched -b "-v"
+
+if [ -e IM4M ]; then
+  rm IM4M
+fi
+
 img4tool -e -s $shsh -m IM4M
 img4 -i work/ibss.patched -o boot/ibss.img4 -M IM4M -A -T ibss
 img4 -i work/ibec.patched -o boot/ibec.img4 -M IM4M -A -T ibec
@@ -270,5 +274,6 @@ pyimg4 im4p create -i work/kcache.patched -o restore/krnl.im4p -f rkrn --lzss
 fi
 
 echo "Continuing to futurerestore..."
+cp $shsh tickets/blob.shsh2
 echo $ipsw > restore/ipsw_path
 _runFuturerestore
