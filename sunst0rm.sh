@@ -42,8 +42,10 @@ if [ $device_dfu == 0 ]; then
     exit
 fi
 
+_runGaster() {
 echo "Starting exploit, device should be in pwnd DFU mode after this."
 ./bin/gaster pwn
+}
 
 if [ "$1" == "boot" ]; then
     if [ ! -d boot ]; then
@@ -51,6 +53,7 @@ if [ "$1" == "boot" ]; then
         exit
     fi
     
+    _runGaster
     cd boot
     
     if [ -e ibss.img4 ]; then
@@ -181,7 +184,6 @@ echo "iBSS: $ibss"
 echo "iBEC: $ibec"
 
 echo "Making boot files..."
-# @TODO: decrypting iBSS/iBEC with gaster is failing
 ./bin/gaster decrypt work/$ibss work/ibss.dec
 ./bin/gaster decrypt work/$ibec work/ibec.dec
 ./bin/iBoot64Patcher work/ibss.dec work/ibss.patched
@@ -274,6 +276,7 @@ else
 pyimg4 im4p create -i work/kcache.patched -o restore/krnl.im4p -f rkrn --lzss
 fi
 
+_runGaster
 echo "Continuing to futurerestore..."
 cp $shsh tickets/blob.shsh2
 echo $ipsw > restore/ipsw
