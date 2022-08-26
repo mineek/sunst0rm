@@ -16,32 +16,35 @@ fi
 if [ -a .requirements_done ]; then
     clear
 else
-    echo "Run $(pwd)/requirements.sh script first!"
+    echo "Run $(pwd)/requirements.sh script first."
     exit
 fi
 
 device_dfu=$(irecovery -m | grep -c "DFU")
 
 if [ $device_dfu == 0 ]; then
-    echo "No device found in DFU mode!"
+    echo "No device found in DFU mode."
     exit
 fi
 
 if [ -z "$1" ]; then
     echo "No argument provided."
-    echo "USAGE:"
-    echo "  RESTORING: $0 <path_to_ipsw> <boardconfig>"
-    echo "  BOOTING: $0 boot"
+    cat <<EOF
+================================================================================
+    USAGE:
+        RESTORING: sunstorm.sh <path_to_ipsw> <boardconfig>
+        BOOTING: sunstorm.sh boot
+================================================================================
+EOF
     exit
 fi
 
-cd bin
-gaster pwn
-cd ..
+echo "Starting exploit, device should be in pwnd DFU mode after this."
+./bin/gaster pwn
 
 if [ "$1" == "boot" ]; then
     if [ ! -d boot ]; then
-        echo "Run $0 <path_to_ipsw> <boardconfig> first!"
+        echo "Run 'sunstorm.sh <path_to_ipsw> <boardconfig>' command first."
         exit
     fi
     
@@ -62,7 +65,7 @@ if [ "$1" == "boot" ]; then
         irecovery -c "bootx"
         echo "Device should be booting now."
     else
-        echo "Required files not found, run $0 again!"
+        echo "Required files not found, run sunstorm.sh again."
     fi
     
     echo "Done!"
@@ -70,14 +73,14 @@ if [ "$1" == "boot" ]; then
 fi
 
 _runFuturerestore() {
-    echo "================================================================"
-    echo "              Starting 'futurerestore' command"
-    echo "If command fails reboot into DFU mode, run $0 again!"
+    echo "================================================================================"
+    echo "                      Starting 'futurerestore' command"
+    echo "If command fails reboot into DFU mode, run $0 again."
     echo ""
     echo "If command succeeds, reboot into DFU mode"
     echo "Then, run the following command to boot device:"
     echo "$0 boot"
-    echo "================================================================"
+    echo "================================================================================"
     read -p "Press ENTER to continue <-"
     restore_ipsw=$(cat restore/ipsw_path)
     futurerestore -t $shsh --use-pwndfu --skip-blob --rdsk restore/ramdisk.im4p --rkrn restore/krnl.im4p --latest-sep --latest-baseband $restore_ipsw
