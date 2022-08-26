@@ -15,7 +15,7 @@ if [ -a .requirements_done ]; then
     rm .requirements_done
     clear
 else
-    echo "Run $(pwd)/requirements.sh"
+    echo "Run \$ ./requirements.sh"
     exit
 fi
 
