@@ -85,7 +85,7 @@ cd bin
 
 if [ ! -e "./gaster" ]; then
 echo "gaster not found. Downloading ..."
-git clone https://github.com/Cryptiiiic/gaster.git gaster_git
+git clone https://github.com/0x7ff/gaster.git gaster_git
 cd gaster_git
 make
 mv -v gaster ../
@@ -96,7 +96,6 @@ xattr -d com.apple.quarantine gaster
 fi
 
 if [ ! -e "./iBoot64Patcher" ]; then
-# @TODO: can iBoot64Patcher be replaced by kairos ?
 cat <<EOF
 ================================================================================
 iBoot64Patcher not found.
