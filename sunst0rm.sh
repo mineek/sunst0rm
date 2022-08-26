@@ -152,7 +152,6 @@ fi
 shsh=$(ls tickets/*.shsh2)
 echo "SigningTicket: $shsh"
 
-
 # @FIX: parse correct filename, BuildIdentities is of type array which makes finding device manifest complex to deal with
 manifest_index=0
 ret=0
@@ -167,14 +166,13 @@ else
 fi
 done
 
-# _extractFromManifest() 
-# {
-#     $(plutil -extract "BuildIdentities.0.Manifest.$1.Info.Path" xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
-# }
+_extractFromManifest() 
+{
+    echo $(plutil -extract "BuildIdentities.$manifest_index.Manifest.$1.Info.Path" xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
+}
 
-device_buildmanifest="BuildIdentities.$manifest_index.Manifest"
-ibss=$(plutil -extract "$device_buildmanifest.iBSS.Info.Path" xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
-ibec=$(plutil -extract "$device_buildmanifest.iBEC.Info.Path" xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
+ibss=$(_extractFromManifest "iBSS")
+ibec=$(_extractFromManifest "iBEC")
 echo "iBSS: $ibss"
 echo "iBEC: $ibec"
 
@@ -186,14 +184,14 @@ echo "Making boot files..."
 img4tool -e -s $shsh -m IM4M
 img4 -i work/ibss.patched -o boot/ibss.img4 -M IM4M -A -T ibss
 img4 -i work/ibec.patched -o boot/ibec.img4 -M IM4M -A -T ibec
-devicetree=$(plutil -extract "$device_buildmanifest.DeviceTree.Info.Path" xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
+devicetree=$(_extractFromManifest "DeviceTree")
 echo "DeviceTree: $devicetree"
 img4 -i work/$devicetree -o boot/devicetree.img4 -M IM4M -T rdtr
-#  restore_trustcache=$(plutil -extract"$device_buildmanifest.RestoreTrustCache.Info.Path" xml1 -o - BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
-trustcache=$(plutil -extract "$device_buildmanifest.StaticTrustCache.Info.Path" xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
+# restore_trustcache==$(_extractFromManifest "RestoreTrustCache")
+trustcache==$(_extractFromManifest "StaticTrustCache")
 echo "StaticTrustCache: $trustcache"
 img4 -i work/$trustcache -o boot/trustcache.img4 -M IM4M -T rtsc 
-kernelcache=$(plutil -extract "$device_buildmanifest.KernelCache.Info.Path" xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
+kernelcache=$(_extractFromManifest "KernelCache")
 echo "KernelCache: $kernelcache"
 
 kpp=0
@@ -224,7 +222,7 @@ fi
 pyimg4 img4 create -p boot/krnl.im4p -o boot/krnl.img4 -m IM4M
 rm work/kcache.patched
 echo "Done with boot files, making restore files..."
-ramdisk=$(plutil -extract "$device_buildmanifest.RestoreRamDisk.Info.Path" xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
+ramdisk=$(_extractFromManifest "RestoreRamDisk")
 echo "RestoreRamDisk: $ramdisk"
 unzip -q $ipsw $ramdisk -d work
 img4 -i work/$ramdisk -o work/ramdisk.dmg
