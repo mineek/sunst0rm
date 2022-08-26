@@ -145,8 +145,8 @@ fi
 unzip -q $ipsw -x *.dmg -d work
 
 # @TODO: ensure correct irecovery version is installed
-device=$(irecovery -q | grep "PRODUCT" | cut -f 2 -d ":" | cut -c 2-)
-ecid=$(irecovery -q | grep "ECID" | sed 's/ECID: //')
+device=$(irecovery -q | grep "PRODUCT" | sed "s/PRODUCT: //")
+ecid=$(irecovery -q | grep "ECID" | sed "s/ECID: //")
 firmware=$(plutil -extract 'ProductVersion' xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
 echo "Firmware version: $firmware"
 echo "Found device: $device"
