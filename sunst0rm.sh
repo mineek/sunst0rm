@@ -42,7 +42,8 @@ if [ $device_dfu == 0 ]; then
     exit
 fi
 
-_pwnDevice() {
+_pwnDevice() 
+{
 echo "Starting exploit, device should be in pwnd DFU mode after this."
 ./bin/gaster pwn
 }
