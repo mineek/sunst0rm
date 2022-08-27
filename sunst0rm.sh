@@ -305,9 +305,9 @@ else
 pyimg4 im4p create -i work/kcache.patched -o restore/krnl.im4p -f rkrn --lzss
 fi
 
-_pwnDevice
-cp $shsh tickets/blob.shsh2
 rm -rf work/
+cp $shsh tickets/blob.shsh2
 echo $ipsw > restore/ipsw
+_pwnDevice
 echo "Continuing to futurerestore..."
 _runFuturerestore
