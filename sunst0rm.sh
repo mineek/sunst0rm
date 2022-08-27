@@ -45,10 +45,14 @@ if [ $device_dfu == 0 ]; then
 fi
 
 # @TODO: ensure correct irecovery version is installed
-cpid=$(irecovery -q | grep "CPID" | sed "s/CPID: //")
-device=$(irecovery -q | grep "PRODUCT" | sed "s/PRODUCT: //")
-ecid=$(irecovery -q | grep "ECID" | sed "s/ECID: //")
-model=$(irecovery -q | grep "MODEL" | sed "s/MODEL: //")
+_deviceInfo()
+{
+    echo $(irecovery -q | grep "$1" | sed "s/$1: //")
+}
+cpid=`_deviceInfo "CPID"`
+device=`_deviceInfo "PRODUCT"`
+ecid=`_deviceInfo "ECID"`
+model=`_deviceInfo "MODEL"`
 echo "Found device: |$device|$cpid|$model|$ecid|"
 
 _pwnDevice() 
