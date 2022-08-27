@@ -51,8 +51,8 @@ echo "Found device: |$device|$cpid|$model|$ecid|"
 
 _pwnDevice() 
 {
-echo "Starting exploit, device should be in pwnd DFU mode after this."
-./bin/gaster pwn
+    echo "Starting exploit, device should be in pwnd DFU mode after this."
+    ./bin/gaster pwn
 }
 
 if [ "$1" == "boot" ]; then
@@ -73,10 +73,10 @@ if [ "$1" == "boot" ]; then
         sleep 2
 
         if [[ $cpid == "0x8010" ]] || [[ $cpid == "0x8015" ]];then
-          irecovery -f ibec.img4
-          sleep 2
-          irecovery -c "go"
-          sleep 5
+            irecovery -f ibec.img4
+            sleep 2
+            irecovery -c "go"
+            sleep 5
         fi
 
         irecovery -c "bootx"
@@ -158,13 +158,13 @@ boardconfig=$2
 ipsw=$3
 
 if [ -z "$boardconfig" ]; then
- echo "boardconfig is required to continue."
- exit
+    echo "boardconfig is required to continue."
+    exit
 fi
 
 if [ -z "$ipsw" ]; then
-  echo "ipsw is required to continue."
-  exit
+    echo "ipsw is required to continue."
+    exit
 fi
 
 if [ -a $ipsw ] || [ ${ipsw: -5} == ".ipsw" ]; then
@@ -192,14 +192,14 @@ echo "SigningTicket: $shsh"
 manifest_index=0
 ret=0
 until [ $ret != 0 ]; do
-manifest=$(plutil -extract "BuildIdentities.$manifest_index.Manifest" xml1 -o - work/BuildManifest.plist)
-ret=$?
-count_manifest=$(echo $manifest | grep -c "$boardconfig")
-if [ $count_manifest == 0 ]; then
+    manifest=$(plutil -extract "BuildIdentities.$manifest_index.Manifest" xml1 -o - work/BuildManifest.plist)
+    ret=$?
+    count_manifest=$(echo $manifest | grep -c "$boardconfig")
+    if [ $count_manifest == 0 ]; then
 	((manifest_index++))
-else
+    else
 	ret=1
-fi
+    fi
 done
 
 _extractFromManifest() 
@@ -219,7 +219,7 @@ echo "Making boot files..."
 ./bin/iBoot64Patcher work/ibec.dec work/ibec.patched -b "-v"
 
 if [ -e IM4M ]; then
-  rm IM4M
+    rm IM4M
 fi
 
 img4tool -e -s $shsh -m IM4M
@@ -305,9 +305,9 @@ else
 pyimg4 im4p create -i work/kcache.patched -o restore/krnl.im4p -f rkrn --lzss
 fi
 
-rm -rf work/
 _pwnDevice
-echo "Continuing to futurerestore..."
 cp $shsh tickets/blob.shsh2
+rm -rf work/
 echo $ipsw > restore/ipsw
+echo "Continuing to futurerestore..."
 _runFuturerestore
