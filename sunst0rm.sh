@@ -174,10 +174,6 @@ echo "$arg2 is not a valid ipsw file."
 exit
 fi
 
-unzip -q $ipsw -x *.dmg -d work
-firmware=$(plutil -extract 'ProductVersion' xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
-echo "Firmware version: $firmware"
-
 if [ ! -d tickets ]; then
     mkdir tickets
 else
@@ -187,6 +183,10 @@ fi
 ./bin/tsschecker -d $device -e $ecid --boardconfig $model -s -l --save-path tickets/
 shsh=$(ls tickets/*.shsh2)
 echo "SigningTicket: $shsh"
+
+unzip -q $ipsw -x *.dmg -d work
+firmware=$(plutil -extract 'ProductVersion' xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
+echo "Firmware version: $firmware"
 
 # @FIX: parse correct filename, BuildIdentities is of type array which makes finding device manifest complex to deal with
 manifest_index=0
@@ -204,6 +204,11 @@ until [ $ret != 0 ]; do
     fi
 done
 
+if [ $ret != 1 ]; then
+echo "Restore manifest not found."
+exit
+fi
+
 _extractFromManifest() 
 {
     echo $(plutil -extract "BuildIdentities.$manifest_index.Manifest.$1.Info.Path" xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
@@ -220,7 +225,7 @@ echo "Making boot files..."
 ./bin/iBoot64Patcher work/ibss.dec work/ibss.patched
 ./bin/iBoot64Patcher work/ibec.dec work/ibec.patched -b "-v"
 
-if [ -e IM4M ]; then
+if [ -a IM4M ]; then
     rm IM4M
 fi
 
