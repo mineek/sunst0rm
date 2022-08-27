@@ -194,11 +194,13 @@ ret=0
 until [ $ret != 0 ]; do
     manifest=$(plutil -extract "BuildIdentities.$manifest_index.Manifest" xml1 -o - work/BuildManifest.plist)
     ret=$?
-    count_manifest=$(echo $manifest | grep -c "$model")
-    if [ $count_manifest == 0 ]; then
-	((manifest_index++))
-    else
-	ret=1
+    if [ $ret == 0 ]; then
+    	count_manifest=$(echo $manifest | grep -c "$model")
+	if [ $count_manifest == 0 ]; then
+	    ((manifest_index++))
+	else
+	    ret=1
+	fi
     fi
 done
 
