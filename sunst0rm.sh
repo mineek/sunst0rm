@@ -307,6 +307,7 @@ else
 pyimg4 im4p create -i work/kcache.patched -o restore/krnl.im4p -f rkrn --lzss
 fi
 
+rm IM4M
 rm -rf work/
 cp $shsh tickets/blob.shsh2
 echo $ipsw > restore/ipsw
