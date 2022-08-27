@@ -18,7 +18,7 @@ Requirements:
   - Install Xcode Command Line Tools `$ xcode-select --install`
   - Install [Homebrew](https://brew.sh)
   - Install required: `futurerestore` `libirecovery` `Python 3`
-  - Downloaded IPSW file ([ipsw.me](https://ipsw.me))
+  - Downloaded IPSW target firmware which can be found at [ipsw.me](https://ipsw.me)
 
 Usage: 
   - restoring: `./sunst0rm.sh restore 'IPSW'`
