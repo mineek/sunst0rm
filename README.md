@@ -14,7 +14,7 @@ MAC OS ONLY!
 This is only tested on iPhone 7 (d101ap) ( no support for legacy devices )
 
 Usage: 
-  - restoring: ./sunst0rm.sh restore BOARDCONFIG IPSW
+  - restoring: ./sunst0rm.sh restore IPSW
   - booting: ./sunst0rm.sh boot
   
 ## Credits / Thanks
