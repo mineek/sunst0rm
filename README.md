@@ -9,7 +9,7 @@ This is a rewrite of sunst0rm in bash.
 
 MAC OS ONLY!
 
-This is only tested on iPhone 7 (d101ap) ( no support for legacy 32bit devices )
+This is only tested on iPhone 7 (d101ap) ( no support for legacy 32-bit devices )
 
 Requirements:
   - Installed Xcode 
