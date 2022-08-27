@@ -125,6 +125,7 @@ _runFuturerestore()
     echo "Then, run '$0 boot' to boot the device."
     echo "================================================================================"
     read -p "Press ENTER to continue <-"
+    rm -rf /tmp/futurerestore/
     futurerestore -t tickets/blob.shsh2 --use-pwndfu --skip-blob --rdsk restore/ramdisk.im4p --rkrn restore/krnl.im4p --latest-sep --latest-baseband $(cat restore/ipsw)
     exit
 }
