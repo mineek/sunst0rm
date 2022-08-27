@@ -18,26 +18,27 @@ Usage:
   - booting: ./sunst0rm.sh boot
   
 ## Credits / Thanks
+
 [futurerestore contributors](https://github.com/futurerestore)
 
-[xerub](https://github.com/xerub) - for img4lib
+[xerub](https://github.com/xerub) - img4lib
 
-[tihmstar](https://github.com/tihmstar) - for img4tool, tsschecker
+[tihmstar](https://github.com/tihmstar) - img4tool, tsschecker
 
-[libimobiledevice](https://github.com/libimobiledevice) - for libirecovery
+[libimobiledevice](https://github.com/libimobiledevice) - libirecovery
 
-[0x7ff](https://github.com/0x7ff) - for gaster
+[0x7ff](https://github.com/0x7ff) - gaster
 
-[Cryptiiiic](https://github.com/Cryptiiiic) - for iBoot64Patcher's fork
+[Cryptiiiic](https://github.com/Cryptiiiic) - iBoot64Patcher's fork
 
-[iSuns9](https://github.com/iSuns9) - for Kernel64Patcher's fork, restored_external64_patcher
+[iSuns9](https://github.com/iSuns9) - restored_external64_patcher, Kernel64Patcher's fork
 
-[exploit3dguy](https://github.com/exploit3dguy) - for asr64_patcher
+[exploit3dguy](https://github.com/exploit3dguy) - asr64_patcher
 
-[ProcursusTeam](https://github.com/ProcursusTeam) - for ldid's fork
+[ProcursusTeam](https://github.com/ProcursusTeam) - ldid's fork
 
-[m1stadev](https://github.com/m1stadev) - for pyimg4
+[m1stadev](https://github.com/m1stadev) - pyimg4
 
-[sen0rxol0](https://github.com/sen0rxol0) - for all their contributions / pull requests
+[sen0rxol0](https://github.com/sen0rxol0) - all their contributions / pull requests
 
-[mineek](https://github.com/mineek) - for sunst0rm
+[mineek](https://github.com/mineek) - sunst0rm
