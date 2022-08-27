@@ -19,8 +19,8 @@ Requirements:
   - Install Xcode Command Line Tools `$ xcode-select --install`
 
 Usage: 
-  - restoring: ./sunst0rm.sh restore 'IPSW'
-  - booting: ./sunst0rm.sh boot
+  - restoring: `./sunst0rm.sh restore 'IPSW'`
+  - booting: `./sunst0rm.sh boot`
   
 ## Credits / Thanks
 
