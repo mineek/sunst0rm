@@ -42,6 +42,14 @@ if [ $device_dfu == 0 ]; then
     exit
 fi
 
+# @TODO: ensure correct irecovery version is installed
+cpid=$(irecovery -q | grep "CPID" | sed "s/CPID: //")
+device=$(irecovery -q | grep "PRODUCT" | sed "s/PRODUCT: //")
+ecid=$(irecovery -q | grep "ECID" | sed "s/ECID: //")
+model=$(irecovery -q | grep "MODEL" | sed "s/MODEL: //")
+
+echo "Found device: |$device|$cpid|$model|$ecid|"
+
 _pwnDevice() 
 {
 echo "Starting exploit, device should be in pwnd DFU mode after this."
@@ -59,18 +67,49 @@ if [ "$1" == "boot" ]; then
     
     if [ -e ibss.img4 ]; then
         echo "Found boot required files, continuing..."
+	
+        if [[ "$device" == *"iPhone10"* ]]; then
+            echo "*This is a device boot dummy text*" > text.txt
+            irecovery -f text.txt
+            rm text.txt
+            sleep 1
+        fi
+
         irecovery -f ibss.img4
-        irecovery -f ibss.img4
+        sleep 3
         irecovery -f ibec.img4
+        sleep 2
+
+        if [[ $cpid == "0x8010" ]] || [[ $cpid == "0x8015" ]];then
+          irecovery -f ibec.img4
+          sleep 2
+          irecovery -c "go"
+          sleep 5
+        fi
+
+        irecovery -c "bootx"
+        sleep 5
+        irecovery -c "bgcolor 0 255 100"
+        sleep 1
         irecovery -f devicetree.img4
+        sleep 2
         irecovery -c "devicetree"
-        irecovery -f aop.img4
-        irecovery -c "firmware"
+        sleep 2
+	
         irecovery -f trustcache.img4
+        sleep 2
         irecovery -c "firmware"
+        sleep 2
+        # irecovery -f aop.img4
+        # sleep 2
+        # irecovery -c "firmware"
+        # sleep 2
+	
         irecovery -f krnl.img4
+        sleep 2
         irecovery -c "bootx"
         echo "Device should be booting now."
+        sleep 5
     fi
     
     echo "Done!"
@@ -143,13 +182,8 @@ exit
 fi
 
 unzip -q $ipsw -x *.dmg -d work
-
-# @TODO: ensure correct irecovery version is installed
-device=$(irecovery -q | grep "PRODUCT" | sed "s/PRODUCT: //")
-ecid=$(irecovery -q | grep "ECID" | sed "s/ECID: //")
 firmware=$(plutil -extract 'ProductVersion' xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
 echo "Firmware version: $firmware"
-echo "Found device: $device"
 
 if [ ! -d tickets ]; then
     mkdir tickets
