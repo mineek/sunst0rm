@@ -11,7 +11,7 @@ You are required to have all the dependecies the normal sunst0rm has and tsschec
 
 MAC OS ONLY!
 
-This is only tested on iPhone 6s (n71map) ( no support for legacy devices )
+This is only tested on iPhone 7 (d101ap) ( no support for legacy devices )
 
 Usage: 
   - restoring: ./sunst0rm.sh restore BOARDCONFIG IPSW

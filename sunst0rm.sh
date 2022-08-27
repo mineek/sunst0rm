@@ -42,10 +42,17 @@ if [ $device_dfu == 0 ]; then
     exit
 fi
 
+# @TODO: ensure correct irecovery version is installed
+cpid=$(irecovery -q | grep "CPID" | sed "s/CPID: //")
+device=$(irecovery -q | grep "PRODUCT" | sed "s/PRODUCT: //")
+ecid=$(irecovery -q | grep "ECID" | sed "s/ECID: //")
+model=$(irecovery -q | grep "MODEL" | sed "s/MODEL: //")
+echo "Found device: |$device|$cpid|$model|$ecid|"
+
 _pwnDevice() 
 {
-echo "Starting exploit, device should be in pwnd DFU mode after this."
-./bin/gaster pwn
+    echo "Starting exploit, device should be in pwnd DFU mode after this."
+    ./bin/gaster pwn
 }
 
 if [ "$1" == "boot" ]; then
@@ -61,16 +68,40 @@ if [ "$1" == "boot" ]; then
         echo "Found boot required files, continuing..."
         irecovery -f ibss.img4
         irecovery -f ibss.img4
+        sleep 3
         irecovery -f ibec.img4
+        sleep 2
+
+        if [[ $cpid == "0x8010" ]] || [[ $cpid == "0x8015" ]];then
+            irecovery -f ibec.img4
+            sleep 2
+            irecovery -c "go"
+            sleep 5
+        fi
+
+        irecovery -c "bootx"
+        sleep 5
+        irecovery -c "bgcolor 0 255 100"
+        sleep 1
         irecovery -f devicetree.img4
+        sleep 2
         irecovery -c "devicetree"
-        irecovery -f aop.img4
-        irecovery -c "firmware"
+        sleep 2
+	
         irecovery -f trustcache.img4
+        sleep 2
         irecovery -c "firmware"
+        sleep 2
+        # irecovery -f aop.img4
+        # sleep 2
+        # irecovery -c "firmware"
+        # sleep 2
+	
         irecovery -f krnl.img4
+        sleep 2
         irecovery -c "bootx"
         echo "Device should be booting now."
+        sleep 5
     fi
     
     echo "Done!"
@@ -94,6 +125,7 @@ _runFuturerestore()
     echo "Then, run '$0 boot' to boot the device."
     echo "================================================================================"
     read -p "Press ENTER to continue <-"
+    rm -rf /tmp/futurerestore/
     futurerestore -t tickets/blob.shsh2 --use-pwndfu --skip-blob --rdsk restore/ramdisk.im4p --rkrn restore/krnl.im4p --latest-sep --latest-baseband $(cat restore/ipsw)
     exit
 }
@@ -126,13 +158,13 @@ boardconfig=$2
 ipsw=$3
 
 if [ -z "$boardconfig" ]; then
- echo "boardconfig is required to continue."
- exit
+    echo "boardconfig is required to continue."
+    exit
 fi
 
 if [ -z "$ipsw" ]; then
-  echo "ipsw is required to continue."
-  exit
+    echo "ipsw is required to continue."
+    exit
 fi
 
 if [ -a $ipsw ] || [ ${ipsw: -5} == ".ipsw" ]; then
@@ -143,13 +175,8 @@ exit
 fi
 
 unzip -q $ipsw -x *.dmg -d work
-
-# @TODO: ensure correct irecovery version is installed
-device=$(irecovery -q | grep "PRODUCT" | sed "s/PRODUCT: //")
-ecid=$(irecovery -q | grep "ECID" | sed "s/ECID: //")
 firmware=$(plutil -extract 'ProductVersion' xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
 echo "Firmware version: $firmware"
-echo "Found device: $device"
 
 if [ ! -d tickets ]; then
     mkdir tickets
@@ -165,14 +192,14 @@ echo "SigningTicket: $shsh"
 manifest_index=0
 ret=0
 until [ $ret != 0 ]; do
-manifest=$(plutil -extract "BuildIdentities.$manifest_index.Manifest" xml1 -o - work/BuildManifest.plist)
-ret=$?
-count_manifest=$(echo $manifest | grep -c "$boardconfig")
-if [ $count_manifest == 0 ]; then
+    manifest=$(plutil -extract "BuildIdentities.$manifest_index.Manifest" xml1 -o - work/BuildManifest.plist)
+    ret=$?
+    count_manifest=$(echo $manifest | grep -c "$boardconfig")
+    if [ $count_manifest == 0 ]; then
 	((manifest_index++))
-else
+    else
 	ret=1
-fi
+    fi
 done
 
 _extractFromManifest() 
@@ -192,7 +219,7 @@ echo "Making boot files..."
 ./bin/iBoot64Patcher work/ibec.dec work/ibec.patched -b "-v"
 
 if [ -e IM4M ]; then
-  rm IM4M
+    rm IM4M
 fi
 
 img4tool -e -s $shsh -m IM4M
@@ -228,13 +255,13 @@ fi
 ./bin/Kernel64Patcher work/kcache.dec work/kcache.patched -f
 
 if [ $kpp == 1 ]; then
-pyimg4 im4p create -i work/kcache.patched -o boot/krnl.im4p --extra work/kpp.bin -f rkrn --lzss
+pyimg4 im4p create -i work/kcache.patched -o work/krnl.im4p --extra work/kpp.bin -f rkrn --lzss
 else
-pyimg4 im4p create -i work/kcache.patched -o boot/krnl.im4p -f rkrn --lzss
+pyimg4 im4p create -i work/kcache.patched -o work/krnl.im4p -f rkrn --lzss
 fi
 
-pyimg4 img4 create -p boot/krnl.im4p -o boot/krnl.img4 -m IM4M
-rm work/kcache.patched
+pyimg4 img4 create -p work/krnl.im4p -o boot/krnl.img4 -m IM4M
+rm work/kcache.* work/krnl.*
 echo "Done with boot files, making restore files..."
 ramdisk=$(_extractFromManifest "RestoreRamDisk")
 echo "RestoreRamDisk: $ramdisk"
@@ -262,13 +289,13 @@ sleep 5
 mkdir restore
 pyimg4 im4p create -i work/ramdisk.dmg -o restore/ramdisk.im4p -f rdsk
 
-# kernelcache=$(plutil -extract "$device_buildmanifest.KernelCache.Info.Path" xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
-# restore_kernelcache=$(plutil -extract "$device_buildmanifest.RestoreKernelCache.Info.Path" xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
-# if [ $kpp == 1 ]; then
-# pyimg4 im4p extract -i work/$kernelcache -o work/kcache.raw --extra work/kpp.bin 
-# else
-# pyimg4 im4p extract -i work/$kernelcache -o work/kcache.raw
-# fi
+restore_kernelcache=$(_extractFromManifest "RestoreKernelCache")
+
+if [ $kpp == 1 ]; then
+pyimg4 im4p extract -i work/$restore_kernelcache -o work/kcache.dec --extra work/kpp.bin
+else
+pyimg4 im4p extract -i work/$restore_kernelcache -o work/kcache.dec
+fi
 
 ./bin/Kernel64Patcher work/kcache.dec work/kcache.patched -f -a
 
@@ -278,8 +305,9 @@ else
 pyimg4 im4p create -i work/kcache.patched -o restore/krnl.im4p -f rkrn --lzss
 fi
 
-_pwnDevice
-echo "Continuing to futurerestore..."
+rm -rf work/
 cp $shsh tickets/blob.shsh2
 echo $ipsw > restore/ipsw
+_pwnDevice
+echo "Continuing to futurerestore..."
 _runFuturerestore
