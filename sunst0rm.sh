@@ -18,12 +18,14 @@ else
     exit
 fi
 
+arg2="<ipsw path>"
+
 _usage() 
 {
     cat <<EOF
 ================================================================================
 Usage:
-    Restoring: sunst0rm.sh restore <boardconfig> <ipsw path> 
+    Restoring: sunst0rm.sh restore $arg2
     Booting: sunst0rm.sh boot
 ================================================================================
 EOF
@@ -57,7 +59,7 @@ _pwnDevice()
 
 if [ "$1" == "boot" ]; then
     if [ ! -d boot ]; then
-        echo "Run 'sunst0rm.sh restore <boardconfig> <ipsw path>' command first."
+        echo "Run 'sunst0rm.sh restore $arg2' command first."
         exit
     fi
     
@@ -154,23 +156,17 @@ fi
 mkdir work
 mkdir boot
 
-boardconfig=$2
-ipsw=$3
-
-if [ -z "$boardconfig" ]; then
-    echo "boardconfig is required to continue."
-    exit
-fi
+ipsw=$2
 
 if [ -z "$ipsw" ]; then
-    echo "ipsw is required to continue."
-    exit
+  echo "$arg2 is required to continue."
+  exit
 fi
 
 if [ -a $ipsw ] || [ ${ipsw: -5} == ".ipsw" ]; then
 echo "Continuing..."
 else
-echo "Failed to validate ipsw file."
+echo "$arg2 is not a valid ipsw file."
 exit
 fi
 
@@ -184,7 +180,7 @@ else
     rm -f tickets/*
 fi
 
-./bin/tsschecker -d $device -e $ecid --boardconfig $boardconfig -s -l --save-path tickets/
+./bin/tsschecker -d $device -e $ecid --boardconfig $model -s -l --save-path tickets/
 shsh=$(ls tickets/*.shsh2)
 echo "SigningTicket: $shsh"
 
@@ -194,7 +190,7 @@ ret=0
 until [ $ret != 0 ]; do
     manifest=$(plutil -extract "BuildIdentities.$manifest_index.Manifest" xml1 -o - work/BuildManifest.plist)
     ret=$?
-    count_manifest=$(echo $manifest | grep -c "$boardconfig")
+    count_manifest=$(echo $manifest | grep -c "$model")
     if [ $count_manifest == 0 ]; then
 	((manifest_index++))
     else
