@@ -18,12 +18,14 @@ else
     exit
 fi
 
+arg2="<ipsw path>"
+
 _usage() 
 {
     cat <<EOF
 ================================================================================
 Usage:
-    Restoring: sunst0rm.sh restore <boardconfig> <ipsw path> 
+    Restoring: sunst0rm.sh restore $arg2
     Booting: sunst0rm.sh boot
 ================================================================================
 EOF
@@ -43,10 +45,14 @@ if [ $device_dfu == 0 ]; then
 fi
 
 # @TODO: ensure correct irecovery version is installed
-cpid=$(irecovery -q | grep "CPID" | sed "s/CPID: //")
-device=$(irecovery -q | grep "PRODUCT" | sed "s/PRODUCT: //")
-ecid=$(irecovery -q | grep "ECID" | sed "s/ECID: //")
-model=$(irecovery -q | grep "MODEL" | sed "s/MODEL: //")
+_deviceInfo()
+{
+    echo $(irecovery -q | grep "$1" | sed "s/$1: //")
+}
+cpid=`_deviceInfo "CPID"`
+device=`_deviceInfo "PRODUCT"`
+ecid=`_deviceInfo "ECID"`
+model=`_deviceInfo "MODEL"`
 echo "Found device: |$device|$cpid|$model|$ecid|"
 
 _pwnDevice() 
@@ -57,7 +63,7 @@ _pwnDevice()
 
 if [ "$1" == "boot" ]; then
     if [ ! -d boot ]; then
-        echo "Run 'sunst0rm.sh restore <boardconfig> <ipsw path>' command first."
+        echo "Run 'sunst0rm.sh restore $arg2' command first."
         exit
     fi
     
@@ -119,14 +125,16 @@ _runFuturerestore()
     echo "================================================================================"
     echo "                      Starting 'futurerestore' command"
     echo "If futurerestore fails, reboot into DFU mode."
-    echo "Then, run '$0 restore' again."
+    echo "Then, run '$0 restore' to try again."
     echo ""
     echo "If futurerestore succeeds, reboot into DFU mode."
     echo "Then, run '$0 boot' to boot the device."
     echo "================================================================================"
     read -p "Press ENTER to continue <-"
     rm -rf /tmp/futurerestore/
-    futurerestore -t tickets/blob.shsh2 --use-pwndfu --skip-blob --rdsk restore/ramdisk.im4p --rkrn restore/krnl.im4p --latest-sep --latest-baseband $(cat restore/ipsw)
+    futurerestore -t tickets/blob.shsh2 --use-pwndfu --skip-blob \
+    	--rdsk restore/ramdisk.im4p --rkrn restore/krnl.im4p \
+	--latest-sep --latest-baseband $(cat restore/ipsw);
     exit
 }
 
@@ -154,29 +162,19 @@ fi
 mkdir work
 mkdir boot
 
-boardconfig=$2
-ipsw=$3
-
-if [ -z "$boardconfig" ]; then
-    echo "boardconfig is required to continue."
-    exit
-fi
+ipsw=$2
 
 if [ -z "$ipsw" ]; then
-    echo "ipsw is required to continue."
-    exit
+  echo "$arg2 is required to continue."
+  exit
 fi
 
 if [ -a $ipsw ] || [ ${ipsw: -5} == ".ipsw" ]; then
 echo "Continuing..."
 else
-echo "Failed to validate ipsw file."
+echo "$arg2 is not a valid ipsw file."
 exit
 fi
-
-unzip -q $ipsw -x *.dmg -d work
-firmware=$(plutil -extract 'ProductVersion' xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
-echo "Firmware version: $firmware"
 
 if [ ! -d tickets ]; then
     mkdir tickets
@@ -184,9 +182,13 @@ else
     rm -f tickets/*
 fi
 
-./bin/tsschecker -d $device -e $ecid --boardconfig $boardconfig -s -l --save-path tickets/
+./bin/tsschecker -d $device -e $ecid --boardconfig $model -s -l --save-path tickets/
 shsh=$(ls tickets/*.shsh2)
 echo "SigningTicket: $shsh"
+
+unzip -q $ipsw -x *.dmg -d work
+firmware=$(plutil -extract 'ProductVersion' xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
+echo "Firmware version: $firmware"
 
 # @FIX: parse correct filename, BuildIdentities is of type array which makes finding device manifest complex to deal with
 manifest_index=0
@@ -194,13 +196,20 @@ ret=0
 until [ $ret != 0 ]; do
     manifest=$(plutil -extract "BuildIdentities.$manifest_index.Manifest" xml1 -o - work/BuildManifest.plist)
     ret=$?
-    count_manifest=$(echo $manifest | grep -c "$boardconfig")
-    if [ $count_manifest == 0 ]; then
-	((manifest_index++))
-    else
-	ret=1
+    if [ $ret == 0 ]; then
+    	count_manifest=$(echo $manifest | grep -c "$model")
+	if [ $count_manifest == 0 ]; then
+	    ((manifest_index++))
+	else
+	    ret=1
+	fi
     fi
 done
+
+if [ $ret != 1 ]; then
+echo "Restore manifest not found."
+exit
+fi
 
 _extractFromManifest() 
 {
@@ -218,7 +227,7 @@ echo "Making boot files..."
 ./bin/iBoot64Patcher work/ibss.dec work/ibss.patched
 ./bin/iBoot64Patcher work/ibec.dec work/ibec.patched -b "-v"
 
-if [ -e IM4M ]; then
+if [ -a IM4M ]; then
     rm IM4M
 fi
 
@@ -246,23 +255,13 @@ kpp=0
 #   kpp=0
 #  fi
 
-if [ $kpp == 1 ]; then
-pyimg4 im4p extract -i work/$kernelcache -o work/kcache.dec --extra work/kpp.bin 
-else
 pyimg4 im4p extract -i work/$kernelcache -o work/kcache.dec
-fi
-
 ./bin/Kernel64Patcher work/kcache.dec work/kcache.patched -f
-
-if [ $kpp == 1 ]; then
-pyimg4 im4p create -i work/kcache.patched -o work/krnl.im4p --extra work/kpp.bin -f rkrn --lzss
-else
 pyimg4 im4p create -i work/kcache.patched -o work/krnl.im4p -f rkrn --lzss
-fi
-
 pyimg4 img4 create -p work/krnl.im4p -o boot/krnl.img4 -m IM4M
 rm work/kcache.* work/krnl.*
-echo "Done with boot files, making restore files..."
+echo "Done with boot files."
+echo "Making restore files..."
 ramdisk=$(_extractFromManifest "RestoreRamDisk")
 echo "RestoreRamDisk: $ramdisk"
 unzip -q $ipsw $ramdisk -d work
@@ -285,26 +284,14 @@ mv work/patched_asr work/ramdisk/usr/sbin/asr
 mv work/patched_restored_external work/ramdisk/usr/local/bin/restored_external
 hdiutil detach -force work/ramdisk
 sleep 5
-
 mkdir restore
 pyimg4 im4p create -i work/ramdisk.dmg -o restore/ramdisk.im4p -f rdsk
-
 restore_kernelcache=$(_extractFromManifest "RestoreKernelCache")
-
-if [ $kpp == 1 ]; then
-pyimg4 im4p extract -i work/$restore_kernelcache -o work/kcache.dec --extra work/kpp.bin
-else
+echo "RestoreKernelCache: $restore_kernelcache"
 pyimg4 im4p extract -i work/$restore_kernelcache -o work/kcache.dec
-fi
-
 ./bin/Kernel64Patcher work/kcache.dec work/kcache.patched -f -a
-
-if [ $kpp == 1 ]; then
-pyimg4 im4p create -i work/kcache.patched -o restore/krnl.im4p --extra work/kpp.bin -f rkrn --lzss
-else
 pyimg4 im4p create -i work/kcache.patched -o restore/krnl.im4p -f rkrn --lzss
-fi
-
+rm IM4M
 rm -rf work/
 cp $shsh tickets/blob.shsh2
 echo $ipsw > restore/ipsw
