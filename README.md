@@ -39,3 +39,5 @@ Usage:
 [m1stadev](https://github.com/m1stadev) - for pyimg4
 
 [sen0rxol0](https://github.com/sen0rxol0) - for all their contributions / pull requests
+
+[mineek](https://github.com/mineek) - for sunst0rm
