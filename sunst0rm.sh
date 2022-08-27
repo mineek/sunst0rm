@@ -254,13 +254,13 @@ fi
 ./bin/Kernel64Patcher work/kcache.dec work/kcache.patched -f
 
 if [ $kpp == 1 ]; then
-pyimg4 im4p create -i work/kcache.patched -o boot/krnl.im4p --extra work/kpp.bin -f rkrn --lzss
+pyimg4 im4p create -i work/kcache.patched -o work/krnl.im4p --extra work/kpp.bin -f rkrn --lzss
 else
-pyimg4 im4p create -i work/kcache.patched -o boot/krnl.im4p -f rkrn --lzss
+pyimg4 im4p create -i work/kcache.patched -o work/krnl.im4p -f rkrn --lzss
 fi
 
-pyimg4 img4 create -p boot/krnl.im4p -o boot/krnl.img4 -m IM4M
-rm work/kcache.patched
+pyimg4 img4 create -p work/krnl.im4p -o boot/krnl.img4 -m IM4M
+rm work/kcache.* work/krnl.*
 echo "Done with boot files, making restore files..."
 ramdisk=$(_extractFromManifest "RestoreRamDisk")
 echo "RestoreRamDisk: $ramdisk"
@@ -288,13 +288,13 @@ sleep 5
 mkdir restore
 pyimg4 im4p create -i work/ramdisk.dmg -o restore/ramdisk.im4p -f rdsk
 
-# kernelcache=$(plutil -extract "$device_buildmanifest.KernelCache.Info.Path" xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
-# restore_kernelcache=$(plutil -extract "$device_buildmanifest.RestoreKernelCache.Info.Path" xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
-# if [ $kpp == 1 ]; then
-# pyimg4 im4p extract -i work/$kernelcache -o work/kcache.raw --extra work/kpp.bin 
-# else
-# pyimg4 im4p extract -i work/$kernelcache -o work/kcache.raw
-# fi
+restore_kernelcache=$(_extractFromManifest "RestoreKernelCache")
+
+if [ $kpp == 1 ]; then
+pyimg4 im4p extract -i work/$restore_kernelcache -o work/kcache.dec --extra work/kpp.bin
+else
+pyimg4 im4p extract -i work/$restore_kernelcache -o work/kcache.dec
+fi
 
 ./bin/Kernel64Patcher work/kcache.dec work/kcache.patched -f -a
 
@@ -303,6 +303,8 @@ pyimg4 im4p create -i work/kcache.patched -o restore/krnl.im4p --extra work/kpp.
 else
 pyimg4 im4p create -i work/kcache.patched -o restore/krnl.im4p -f rkrn --lzss
 fi
+
+rm work/kcache.*
 
 _pwnDevice
 echo "Continuing to futurerestore..."
