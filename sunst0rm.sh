@@ -47,7 +47,6 @@ cpid=$(irecovery -q | grep "CPID" | sed "s/CPID: //")
 device=$(irecovery -q | grep "PRODUCT" | sed "s/PRODUCT: //")
 ecid=$(irecovery -q | grep "ECID" | sed "s/ECID: //")
 model=$(irecovery -q | grep "MODEL" | sed "s/MODEL: //")
-
 echo "Found device: |$device|$cpid|$model|$ecid|"
 
 _pwnDevice() 
@@ -67,14 +66,7 @@ if [ "$1" == "boot" ]; then
     
     if [ -e ibss.img4 ]; then
         echo "Found boot required files, continuing..."
-	
-        if [[ "$device" == *"iPhone10"* ]]; then
-            echo "*This is a device boot dummy text*" > text.txt
-            irecovery -f text.txt
-            rm text.txt
-            sleep 1
-        fi
-
+        irecovery -f ibss.img4
         irecovery -f ibss.img4
         sleep 3
         irecovery -f ibec.img4
