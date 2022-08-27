@@ -16,9 +16,8 @@ fi
 
 if [ ! -e "/usr/local/bin/irecovery" ]; then
 cat <<EOF
-
 irecovery not found. Install from https://github.com/libimobiledevice/libirecovery
-Or use these commands below to install:
+Or use these following commands to install:
 
 $ brew install pkg-config autoconf automake git libusb libtool
 $ git clone https://github.com/libimobiledevice/libirecovery.git
@@ -86,7 +85,7 @@ cd bin
 
 if [ ! -e "./gaster" ]; then
 echo "gaster not found. Downloading ..."
-git clone https://github.com/Cryptiiiic/gaster.git gaster_git
+git clone https://github.com/0x7ff/gaster.git gaster_git
 cd gaster_git
 make
 mv -v gaster ../
@@ -97,9 +96,7 @@ xattr -d com.apple.quarantine gaster
 fi
 
 if [ ! -e "./iBoot64Patcher" ]; then
-# @TODO: can iBoot64Patcher be replaced by kairos ?
 cat <<EOF
-
 ================================================================================
 iBoot64Patcher not found.
 iBoot64Patcher (Cryptiiiic's fork) can be downloaded at https://github.com/Cryptiiiic/iBoot64Patcher/actions
@@ -176,4 +173,5 @@ chmod 755 tsschecker
 xattr -d com.apple.quarantine tsschecker
 fi
 
-touch ./.requirements_done
+cd ../
+touch .requirements_done

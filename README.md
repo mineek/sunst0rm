@@ -1,6 +1,6 @@
 # sunst0rm dev
 
-## WARNING: THIS IS THE DEV BRANCH, ANYTHING CAN AND WILL GO WRONG!
+## WARNING: USE AT YOUR OWN RISK!
 
 ## NOTE: ANY ISSUES SUBMITTED USING THE DEV BRANCH NEED TO CLEARLY STATE THAT YOU'RE USING THE DEV BRANCH
 
@@ -13,7 +13,7 @@ MAC OS ONLY!
 This is only tested on iPhone 6s (n71map) ( no support for legacy devices )
 
 Usage: 
-  - restoring: ./sunst0rm.sh restore IPSW BOARDCONFIG
+  - restoring: ./sunst0rm.sh restore BOARDCONFIG IPSW
   - booting: ./sunst0rm.sh boot
   
 ## Credits / Thanks
