@@ -297,6 +297,7 @@ mkdir restore
 pyimg4 im4p create -i work/ramdisk.dmg -o restore/ramdisk.im4p -f rdsk
 
 restore_kernelcache=$(_extractFromManifest "RestoreKernelCache")
+echo "RestoreKernelCache: $restore_kernelcache"
 
 if [ $kpp == 1 ]; then
 pyimg4 im4p extract -i work/$restore_kernelcache -o work/kcache.dec --extra work/kpp.bin
