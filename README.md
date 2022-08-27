@@ -13,6 +13,11 @@ MAC OS ONLY!
 
 This is only tested on iPhone 7 (d101ap) ( no support for legacy devices )
 
+Requirements:
+  - Install [Homebrew](https://brew.sh)
+  - Install Xcode 
+  - Install Xcode Command Line Tools `$ xcode-select --install`
+
 Usage: 
   - restoring: ./sunst0rm.sh restore 'IPSW'
   - booting: ./sunst0rm.sh boot
