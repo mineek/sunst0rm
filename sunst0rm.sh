@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# @TODO: add FUDFirmware: AOP, Homer
+
 if [ "$(uname)" != "Darwin" ]; then
     echo "Only macOS is supported."
     exit
