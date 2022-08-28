@@ -16,7 +16,7 @@ Requirements:
   - Installed Xcode 
   - Installed Xcode Command Line Tools `$ xcode-select --install`
   - Installed [Homebrew](https://brew.sh)
-  - Downloaded IPSW target firmware which can be found at [ipsw.me](https://ipsw.me)
+  - Downloaded IPSW (target iOS firmware) which can be found at [ipsw.me](https://ipsw.me)
   - Installed without brew: `futurerestore` `libirecovery` `Python 3`
 
 Usage: 
