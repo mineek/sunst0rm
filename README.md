@@ -9,6 +9,7 @@ This is a rewrite of sunst0rm in bash.
 MAC OS ONLY!
 
 This is only tested on iPhone 7 (d101ap) ( no support for legacy 32-bit devices )
+[SEP/BB Compatibility Chart](https://docs.google.com/spreadsheets/d/1Mb1UNm6g3yvdQD67M413GYSaJ4uoNhLgpkc7YKi3LBs/)
 
 Requirements:
   - Installed Xcode 
@@ -20,7 +21,7 @@ Requirements:
 Usage: 
   - restoring: `./sunst0rm.sh restore 'IPSW'`
   - booting: `./sunst0rm.sh boot`
-  
+
 ## Credits / Thanks
 
 [futurerestore contributors](https://github.com/futurerestore)
