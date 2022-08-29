@@ -44,7 +44,7 @@ _dfuWait()
   read -p "Press ENTER when device is ready to continue <-"
   echo "Searching for device in DFU mode..."
   device_dfu=0
-  until [ $device_dfu == 1 ]; do
+  until [[ $device_dfu == 1 ]]; do
     device_dfu=$(irecovery -m | grep -c "DFU")
   done
   echo "Found device in DFU mode."
@@ -106,19 +106,19 @@ if [ "$1" == "boot" ]; then
     irecovery -c "firmware"
     sleep 2
 
-    if [ -e aop.img4 ]; then
-      irecovery -f aop.img4
-      sleep 2
-      irecovery -c "firmware"
-      sleep 2
-    fi
-
-    if [ -e homer.img4 ]; then
-      irecovery -f homer.img4
-      sleep 2
-      irecovery -c "firmware"
-      sleep 2
-    fi
+    # if [ -e aop.img4 ]; then
+    #   irecovery -f aop.img4
+    #   sleep 2
+    #   irecovery -c "firmware"
+    #   sleep 2
+    # fi
+    #
+    # if [ -e homer.img4 ]; then
+    #   irecovery -f homer.img4
+    #   sleep 2
+    #   irecovery -c "firmware"
+    #   sleep 2
+    # fi
 
     irecovery -f kernelcache.img4
     sleep 2
@@ -211,7 +211,7 @@ echo "Firmware version: $firmware"
 # @FIX: parse correct filename, BuildIdentities is of type array which makes finding device manifest complex to deal with
 manifest_index=0
 ret=0
-until [ $ret != 0 ]; do
+until [[ $ret != 0 ]]; do
   manifest=$(plutil -extract "BuildIdentities.$manifest_index.Manifest" xml1 -o - work/BuildManifest.plist)
   ret=$?
   if [ $ret == 0 ]; then
@@ -260,23 +260,23 @@ trustcache=$(_extractFromManifest "StaticTrustCache")
 echo "StaticTrustCache: $trustcache"
 img4 -i work/$trustcache -o boot/trustcache.img4 -M IM4M -T rtsc
 
-plutil -extract "BuildIdentities.$manifest_index.Manifest.AOP" xml1 -s work/BuildManifest.plist
-ret=$?
-
-if [ $ret == 0 ]; then
-  aop=$(_extractFromManifest "AOP")
-  echo "AOP: $aop"
-  img4 -i work/$aop -o boot/aop.img4 -M IM4M
-fi
-
-plutil -extract "BuildIdentities.$manifest_index.Manifest.Homer" xml1 -s work/BuildManifest.plist
-ret=$?
-
-if [ $ret == 0 ]; then
-  homer=$(_extractFromManifest "Homer")
-  echo "Homer: $homer"
-  img4 -i work/$homer -o boot/homer.img4 -M IM4M
-fi
+# plutil -extract "BuildIdentities.$manifest_index.Manifest.AOP" xml1 -s work/BuildManifest.plist
+# ret=$?
+# 
+# if [ $ret == 0 ]; then
+#   aop=$(_extractFromManifest "AOP")
+#   echo "AOP: $aop"
+#   img4 -i work/$aop -o boot/aop.img4 -M IM4M
+# fi
+#
+# plutil -extract "BuildIdentities.$manifest_index.Manifest.Homer" xml1 -s work/BuildManifest.plist
+# ret=$?
+#
+# if [ $ret == 0 ]; then
+#   homer=$(_extractFromManifest "Homer")
+#   echo "Homer: $homer"
+#   img4 -i work/$homer -o boot/homer.img4 -M IM4M
+# fi
 
 kpp=0
 # @TODO: and where is kpp.bin
