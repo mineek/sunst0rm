@@ -13,7 +13,7 @@ Based on [my guide](https://github.com/mineek/iostethereddowngrade)
 ### If you still have problems, join the [Discord](https://discord.gg/TqVH6NBwS3) server for help
 
 ### Linux version by [MCApollo](https://github.com/MCApollo): [here](https://github.com/MCApollo/sunst0rm) ( only tested on arch )
-
+ok
 ### If you want, please checkout the [dev branch](https://github.com/mineek/sunst0rm/tree/dev) where my bash rewrite lives and give feedback / report issues, it would be really useful!
 
 ## Notes
