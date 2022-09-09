@@ -18,6 +18,7 @@ Requirements:
   - Installed [Homebrew](https://brew.sh)
   - Downloaded IPSW (target iOS firmware) which can be found at [ipsw.me](https://ipsw.me)
   - Installed without brew: `futurerestore` `libirecovery` `Python 3`
+  - Installed manually: [libimg4tool](https://github.com/m1stadev/img4tool)
 
 Usage: 
   - restoring: `./sunst0rm.sh restore 'IPSW'`
