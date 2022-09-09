@@ -19,12 +19,16 @@ cat <<EOF
 irecovery not found. Install from https://github.com/libimobiledevice/libirecovery
 Or use these following commands to install:
 
-$ brew install pkg-config autoconf automake git libusb libtool
-$ git clone https://github.com/libimobiledevice/libirecovery.git
-$ cd libirecovery
-$ ./autogen.sh
-$ make
-$ sudo make install
+  brew install autoconf automake libtool pkg-config cmake libzip openssl libplist libpng
+  sudo cp -r $(brew --prefix openssl)/lib/pkgconfig/* /usr/local/lib/pkgconfig/
+  git clone https://github.com/libimobiledevice/libirecovery.git
+  cd libirecovery
+  ./autogen.sh --without-cython --enable-static --disable-shared CFLAGS="-fPIC" CXXFLAGS="-fPIC"
+  make
+  rm -rf src/.libs/*.dylib #there is not such thing as no-dynamic on macOS
+  sudo make install
+  cd ..
+  rm -rf libirecovery
 
 EOF
 exit
