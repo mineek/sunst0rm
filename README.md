@@ -6,7 +6,7 @@
 
 This is a rewrite of sunst0rm in bash.
 
-MAC OS ONLY!
+Only macOS supported!
 
 This is only tested on iPhone 7 (d101ap)
 
