@@ -46,6 +46,7 @@ _eexit()
 _dfuWait()
 {
   # clear
+  echo "==================================================================================================="
   echo "Please reboot device into DFU mode."
   read -p "Press ENTER when device is ready to continue <-"
   echo "Searching for device in DFU mode..."
@@ -144,14 +145,18 @@ fi
 
 _runFuturerestore()
 {
-  echo "================================================================================"
-  echo "                      Starting 'futurerestore' command"
-  echo "If futurerestore fails, reboot into DFU mode."
-  echo "Then, run '$0 restore' to try again."
-  echo ""
-  echo "If futurerestore succeeds, reboot into DFU mode."
-  echo "Then, run '$0 boot' to boot the device."
-  echo "================================================================================"
+  cat <<EOF
+===================================================================================================
+WARNING: Starting 'futurerestore' command
+
+If futurerestore fails, reboot into DFU mode.
+Then, run '$0 restore' to try again.
+--------------------------------------------------
+If futurerestore succeeds, reboot into DFU mode.
+Then, run '$0 boot' to boot the device.
+
+==================================================================================================="
+EOF
   read -p "Press ENTER to continue <-"
   rm -rf /tmp/futurerestore/
   restore_ipsw=$(cat restore/ipsw)
@@ -162,6 +167,7 @@ _runFuturerestore()
 }
 
 if [ -d restore ]; then
+  echo "==================================================================================================="
   echo "Restore from previous run ? (y/n):"
   read yn
 
