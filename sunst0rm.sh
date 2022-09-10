@@ -47,9 +47,9 @@ _dfuWait()
 {
   # clear
   echo "==================================================================================================="
-  echo "Please reboot device into DFU mode."
+  echo "Make sure to reboot device into DFU Mode."
   read -p "Press ENTER when device is ready to continue <-"
-  echo "Searching for device in DFU mode..."
+  echo "Searching for device in DFU Mode..."
   device_dfu=0
   until [[ $device_dfu == 1 ]]; do
     device_dfu=$(irecovery -m | grep -c "DFU")
@@ -71,7 +71,7 @@ echo "Found device: |$device|$cpid|$model|$ecid|"
 
 _pwnDevice()
 {
-  echo "Starting exploit, device should be in pwnd DFU mode after this."
+  echo "Starting exploit, device should be in pwnd DFU Mode after this."
   ./bin/gaster pwn
 }
 
@@ -147,15 +147,15 @@ _runFuturerestore()
 {
   cat <<EOF
 ===================================================================================================
-WARNING: Starting 'futurerestore' command
-
-If futurerestore fails, reboot into DFU mode.
-Then, run '$0 restore' to try again.
---------------------------------------------------
-If futurerestore succeeds, reboot into DFU mode.
-Then, run '$0 boot' to boot the device.
-
-==================================================================================================="
+                          WARNING: Starting 'futurerestore' command !
+---------------------------------------------------------------------------------------------------
+If futurerestore FAILS, reboot device into DFU Mode.
+  Then, run '$0 restore' to try again.
+---------------------------------------------------------------------------------------------------
+If futurerestore SUCCEEDS, reboot device into DFU Mode.
+  Then, run '$0 boot' to boot the device.
+---------------------------------------------------------------------------------------------------
+===================================================================================================
 EOF
   read -p "Press ENTER to continue <-"
   rm -rf /tmp/futurerestore/
@@ -291,18 +291,15 @@ img4 -i work/$kernelcache -o work/kcache.dec
 pyimg4 im4p create -i work/kcache.patched -o work/kcache.im4p -f rkrn --lzss
 pyimg4 img4 create -p work/kcache.im4p -o boot/kernelcache.img4 -m IM4M
 rm work/kcache.*
-echo "Done with boot files."
-echo "Making restore files ..."
+echo "Making restore files..."
 ramdisk=$(_extractFromManifest "RestoreRamDisk")
 echo "RestoreRamDisk: $ramdisk"
 restore_kernelcache=$(_extractFromManifest "RestoreKernelCache")
 echo "RestoreKernelCache: $restore_kernelcache"
-echo "Decrypting files ..."
 mkdir restore
 unzip -q $ipsw $ramdisk -d work
 img4 -i work/$ramdisk -o work/ramdisk.dmg
 img4 -i work/$restore_kernelcache -o work/kcache.dec
-echo "Patching ramdisk ..."
 mkdir work/ramdisk
 hdiutil attach work/ramdisk.dmg -mountpoint work/ramdisk
 sleep 5
@@ -321,9 +318,7 @@ mv work/patched_asr work/ramdisk/usr/sbin/asr
 mv work/patched_restored_external work/ramdisk/usr/local/bin/restored_external
 hdiutil detach -force work/ramdisk
 sleep 5
-echo "Patching kernel ..."
 ./bin/Kernel64Patcher work/kcache.dec work/kcache.patched -f -a
-echo "Packing files ..."
 pyimg4 im4p create -i work/ramdisk.dmg -o restore/rdsk.im4p -f rdsk
 pyimg4 im4p create -i work/kcache.patched -o restore/rkrn.im4p -f rkrn --lzss
 rm IM4M
