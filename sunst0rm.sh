@@ -37,6 +37,12 @@ if [ -z "$1" ]; then
   exit
 fi
 
+_eexit()
+{
+  echo "[EXITING] $1"
+  exit
+}
+
 _dfuWait()
 {
   # clear
@@ -47,7 +53,6 @@ _dfuWait()
   until [[ $device_dfu == 1 ]]; do
     device_dfu=$(irecovery -m | grep -c "DFU")
   done
-  echo "Found device in DFU mode."
 }
 
 _dfuWait
@@ -71,8 +76,7 @@ _pwnDevice()
 
 if [ "$1" == "boot" ]; then
   if [ ! -d boot ]; then
-    echo "Run 'sunst0rm.sh restore $arg2' command first."
-    exit
+    _eexit "Run 'sunst0rm.sh restore $arg2' command first."
   fi
 
   _pwnDevice
@@ -101,6 +105,7 @@ if [ "$1" == "boot" ]; then
     sleep 2
     irecovery -c "devicetree"
     sleep 2
+
     irecovery -f trustcache.img4
     sleep 2
     irecovery -c "firmware"
@@ -127,7 +132,7 @@ if [ "$1" == "boot" ]; then
     sleep 5
   fi
 
-  echo "Done!"
+  echo "DONE!"
   exit
 fi
 
@@ -150,8 +155,8 @@ _runFuturerestore()
   read -p "Press ENTER to continue <-"
   rm -rf /tmp/futurerestore/
   restore_ipsw=$(cat restore/ipsw)
-  futurerestore -t tickets/blob.shsh2 --use-pwndfu --skip-blob \
-  --rdsk restore/ramdisk.im4p --rkrn restore/krnl.im4p \
+  futurerestore -t tickets/ticket.shsh2 --use-pwndfu --skip-blob \
+  --rdsk restore/rdsk.im4p --rkrn restore/rkrn.im4p \
   --latest-sep --latest-baseband $restore_ipsw;
   exit
 }
@@ -183,15 +188,13 @@ mkdir boot
 ipsw=$2
 
 if [ -z "$ipsw" ]; then
-  echo "$arg2 is required to continue."
-  exit
+  _eexit "$arg2 is required to continue."
 fi
 
 if [ -a $ipsw ] || [ ${ipsw: -5} == ".ipsw" ]; then
   echo "Continuing..."
 else
-  echo "$arg2 is not a valid ipsw file."
-  exit
+  _eexit "$arg2 is not a valid ipsw file."
 fi
 
 if [ ! -d tickets ]; then
@@ -225,9 +228,14 @@ until [[ $ret != 0 ]]; do
 done
 
 if [ $ret != 1 ]; then
-echo "Restore manifest not found."
-exit
+_eexit "Restore manifest not found."
 fi
+
+if [ -a IM4M ]; then
+  rm IM4M
+fi
+
+img4tool -e -s $shsh -m IM4M
 
 _extractFromManifest()
 {
@@ -238,31 +246,23 @@ ibss=$(_extractFromManifest "iBSS")
 ibec=$(_extractFromManifest "iBEC")
 echo "iBSS: $ibss"
 echo "iBEC: $ibec"
-
 echo "Making boot files..."
 ./bin/gaster decrypt work/$ibss work/ibss.dec
 ./bin/gaster decrypt work/$ibec work/ibec.dec
 ./bin/iBoot64Patcher work/ibss.dec work/ibss.patched
 ./bin/iBoot64Patcher work/ibec.dec work/ibec.patched -b "-v"
-
-if [ -a IM4M ]; then
-  rm IM4M
-fi
-
-img4tool -e -s $shsh -m IM4M
 img4 -i work/ibss.patched -o boot/ibss.img4 -M IM4M -A -T ibss
 img4 -i work/ibec.patched -o boot/ibec.img4 -M IM4M -A -T ibec
 devicetree=$(_extractFromManifest "DeviceTree")
 echo "DeviceTree: $devicetree"
 img4 -i work/$devicetree -o boot/devicetree.img4 -M IM4M -T rdtr
-# restore_trustcache=$(_extractFromManifest "RestoreTrustCache")
 trustcache=$(_extractFromManifest "StaticTrustCache")
 echo "StaticTrustCache: $trustcache"
 img4 -i work/$trustcache -o boot/trustcache.img4 -M IM4M -T rtsc
 
 # plutil -extract "BuildIdentities.$manifest_index.Manifest.AOP" xml1 -s work/BuildManifest.plist
 # ret=$?
-# 
+#
 # if [ $ret == 0 ]; then
 #   aop=$(_extractFromManifest "AOP")
 #   echo "AOP: $aop"
@@ -278,31 +278,25 @@ img4 -i work/$trustcache -o boot/trustcache.img4 -M IM4M -T rtsc
 #   img4 -i work/$homer -o boot/homer.img4 -M IM4M
 # fi
 
-kpp=0
-# @TODO: and where is kpp.bin
-# @TODO: add kpp for legacy devices support
-#  if [[ "$device" == *"iPhone8,"* ]] || [[ "$device" == *"iPhone7,"* ]] || [[ "$device" == *"iPhone6,"* ]]; then
-#   echo "Device has kpp"
-#   kpp=1
-#  else
-#   echo "Device does not have kpp"
-#   kpp=0
-#  fi
-
 kernelcache=$(_extractFromManifest "KernelCache")
 echo "KernelCache: $kernelcache"
-pyimg4 im4p extract -i work/$kernelcache -o work/kcache.dec
-./bin/Kernel64Patcher work/kcache.dec work/kcache.patched -f
+img4 -i work/$kernelcache -o work/kcache.dec
+./bin/Kernel64Patcher work/kcache.dec work/kcache.patched -f -a
 pyimg4 im4p create -i work/kcache.patched -o work/kcache.im4p -f rkrn --lzss
 pyimg4 img4 create -p work/kcache.im4p -o boot/kernelcache.img4 -m IM4M
 rm work/kcache.*
 echo "Done with boot files."
-echo "Making restore files..."
+echo "Making restore files ..."
 ramdisk=$(_extractFromManifest "RestoreRamDisk")
 echo "RestoreRamDisk: $ramdisk"
+restore_kernelcache=$(_extractFromManifest "RestoreKernelCache")
+echo "RestoreKernelCache: $restore_kernelcache"
+echo "Decrypting files ..."
 mkdir restore
 unzip -q $ipsw $ramdisk -d work
 img4 -i work/$ramdisk -o work/ramdisk.dmg
+img4 -i work/$restore_kernelcache -o work/kcache.dec
+echo "Patching ramdisk ..."
 mkdir work/ramdisk
 hdiutil attach work/ramdisk.dmg -mountpoint work/ramdisk
 sleep 5
@@ -321,17 +315,25 @@ mv work/patched_asr work/ramdisk/usr/sbin/asr
 mv work/patched_restored_external work/ramdisk/usr/local/bin/restored_external
 hdiutil detach -force work/ramdisk
 sleep 5
-pyimg4 im4p create -i work/ramdisk.dmg -o restore/ramdisk.im4p -f rdsk
-restore_kernelcache=$(_extractFromManifest "RestoreKernelCache")
-echo "RestoreKernelCache: $restore_kernelcache"
-pyimg4 im4p extract -i work/$restore_kernelcache -o work/kcache.dec
+echo "Patching kernel ..."
 ./bin/Kernel64Patcher work/kcache.dec work/kcache.patched -f -a
-pyimg4 im4p create -i work/kcache.patched -o restore/krnl.im4p -f rkrn --lzss
+echo "Packing files ..."
+pyimg4 im4p create -i work/ramdisk.dmg -o restore/rdsk.im4p -f rdsk
+pyimg4 im4p create -i work/kcache.patched -o restore/rkrn.im4p -f rkrn --lzss
 rm IM4M
 rm -rf work/
-cp $shsh tickets/blob.shsh2
+cp $shsh tickets/ticket.shsh2
 echo $ipsw > restore/ipsw
 _dfuWait
 _pwnDevice
 echo "Continuing to futurerestore..."
 _runFuturerestore
+
+# @TODO: add kpp for legacy devices support
+#  if [[ "$device" == *"iPhone8,"* ]] || [[ "$device" == *"iPhone7,"* ]] || [[ "$device" == *"iPhone6,"* ]]; then
+#   echo "Device has kpp"
+#   kpp=1
+#  else
+#   echo "Device does not have kpp"
+#   kpp=0
+#  fi
