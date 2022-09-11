@@ -5,3 +5,5 @@ work
 .DS_Store
 boot
 restore
+bin
+.requirements_done
