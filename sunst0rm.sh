@@ -147,13 +147,11 @@ _runFuturerestore()
 {
   cat <<EOF
 ===================================================================================================
-                          WARNING: Starting 'futurerestore' command !
+#                          WARNING: Starting 'futurerestore' command !
 ---------------------------------------------------------------------------------------------------
-If futurerestore FAILS, reboot device into DFU Mode.
-  Then, run '$0 restore' to try again.
+If futurerestore FAILS, Run '$0 restore' to try again.
 ---------------------------------------------------------------------------------------------------
-If futurerestore SUCCEEDS, reboot device into DFU Mode.
-  Then, run '$0 boot' to boot the device.
+If futurerestore SUCCEEDS, Run '$0 boot' to boot device.
 ---------------------------------------------------------------------------------------------------
 ===================================================================================================
 EOF
