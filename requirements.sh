@@ -100,28 +100,14 @@ xattr -d com.apple.quarantine gaster
 fi
 
 if [ ! -e "./iBoot64Patcher" ]; then
-cat <<EOF
-================================================================================
-iBoot64Patcher not found.
-iBoot64Patcher (Cryptiiiic's fork) can be downloaded at https://github.com/Cryptiiiic/iBoot64Patcher/actions
-INFO: Downloading artifacts requires a GitHub account!
-================================================================================
-
-Instructions:
-  Download iBoot64Patcher zip
-  Unzip iBoot64Patcher zip
-  Drag and drop extracted iBoot64Patcher file into the terminal:
-EOF
-read iboot64_patcher
-if [ -n "$iboot64_patcher" ] && [ -a $iboot64_patcher ];
-then
-mv -v $iboot64_patcher .
+echo "iBoot64Patcher not found. Downloading ..."
+curl --progress-bar -OL https://nightly.link/Cryptiiiic/iBoot64Patcher/workflows/ci/main/iBoot64Patcher-macOS-x86_64-RELEASE.zip
+unzip iBoot64Patcher-macOS-x86_64-RELEASE.zip
+mv iBoot64Patcher-macOS-x86_64-RELEASE/iBoot64Patcher .
+rm -r iBoot64Patcher-macOS-x86_64-RELEASE/
+rm iBoot64Patcher-macOS-x86_64-RELEASE.zip
 chmod 755 iBoot64Patcher
 xattr -d com.apple.quarantine iBoot64Patcher
-else
-echo "iBoot64Patcher is required!"
-exit
-fi
 fi
 
 if [ ! -e "./Kernel64Patcher" ]; then
