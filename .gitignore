@@ -7,10 +7,3 @@ boot
 restore
 bin
 .requirements_done
-
-# ./*/*.shsh2
-# .DS_Store
-# boot
-# restore
-# bin
-# .requirements_done
