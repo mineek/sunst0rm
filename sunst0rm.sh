@@ -235,12 +235,6 @@ if [ $ret != 1 ]; then
 _eexit "Restore manifest not found."
 fi
 
-if [ -a IM4M ]; then
-  rm IM4M
-fi
-
-img4tool -e -s $shsh -m IM4M
-
 _extractFromManifest()
 {
     echo $(plutil -extract "BuildIdentities.$manifest_index.Manifest.$1.Info.Path" xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
@@ -251,6 +245,12 @@ ibec=$(_extractFromManifest "iBEC")
 echo "iBSS: $ibss"
 echo "iBEC: $ibec"
 echo "Making boot files..."
+
+if [ -a IM4M ]; then
+  rm IM4M
+fi
+
+img4tool -e -s $shsh -m IM4M
 ./bin/gaster decrypt work/$ibss work/ibss.dec
 ./bin/gaster decrypt work/$ibec work/ibec.dec
 ./bin/iBoot64Patcher work/ibss.dec work/ibss.patched
