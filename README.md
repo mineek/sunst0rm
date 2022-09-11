@@ -21,6 +21,7 @@ Based on [my guide](https://github.com/mineek/iostethereddowngrade)
 - On A10-A11 devices crucial functionality such as the Home Button, Audio, Microphone, Vibration does NOT work at the moment.
 - You should NOT be tether downgrading your main device it is only recommended to tether downgrade a second device.
 - For some frequently asked fixes go [here](https://github.com/Arna13/sunst0rm-guide/blob/main/docs/misc/EXTRAS.md) for help.
+- If you want to know which iOS versions you can downgrade and jailbreak look [this](https://github.com/Arna13/sunst0rm-guide/blob/main/docs/wherecanigo.md) page.
 ## Requirements:
 - [libirecovery](https://github.com/libimobiledevice/libirecovery)
 - [futurerestore (fork)](https://github.com/futurerestore/futurerestore)
