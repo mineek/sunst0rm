@@ -99,12 +99,23 @@ chmod 755 gaster
 xattr -d com.apple.quarantine gaster
 fi
 
+# @FIX: move iBoot64Patcher into ./bin/
+# if [ ! -e "./iBoot64Patcher" ]; then
+# echo "iBoot64Patcher not found. Downloading..."
+# curl --progress-bar -OL https://nightly.link/Cryptiiiic/iBoot64Patcher/workflows/ci/main/iBoot64Patcher-macOS-x86_64-RELEASE.zip
+# unzip iBoot64Patcher-macOS-x86_64-RELEASE.zip
+# mv iBoot64Patcher-macOS-x86_64-RELEASE/iBoot64Patcher .
+# rm -rf iBoot64Patcher-*
+# chmod 755 iBoot64Patcher
+# xattr -d com.apple.quarantine iBoot64Patcher
+# fi
+
 if [ ! -e "./iBoot64Patcher" ]; then
-echo "iBoot64Patcher not found. Downloading..."
+echo "iBoot64Patcher not found. Downloading ..."
 curl --progress-bar -OL https://nightly.link/Cryptiiiic/iBoot64Patcher/workflows/ci/main/iBoot64Patcher-macOS-x86_64-RELEASE.zip
 unzip iBoot64Patcher-macOS-x86_64-RELEASE.zip
-mv iBoot64Patcher-macOS-x86_64-RELEASE/iBoot64Patcher .
-rm -r iBoot64Patcher-macOS-x86_64-RELEASE/
+mv -v iBoot64Patcher-macOS-x86_64-RELEASE/iBoot64Patcher ../
+rm -rf iBoot64Patcher-macOS-x86_64-RELEASE/
 rm iBoot64Patcher-macOS-x86_64-RELEASE.zip
 chmod 755 iBoot64Patcher
 xattr -d com.apple.quarantine iBoot64Patcher
