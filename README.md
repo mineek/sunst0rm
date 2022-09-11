@@ -20,6 +20,7 @@ Based on [my guide](https://github.com/mineek/iostethereddowngrade)
 - It is a *tethered* downgrade meaning you will have to boot tethered every single time from your PC if your battery dies or if you reboot your phone.
 - On A10-A11 devices crucial functionality such as the Home Button, Audio, Microphone, Vibration does NOT work at the moment.
 - You should NOT be tether downgrading your main device it is only recommended to tether downgrade a second device.
+- For some frequently asked fixes go [here](https://github.com/Arna13/sunst0rm-guide/blob/main/docs/misc/EXTRAS.md) for help.
 ## Requirements:
 - [libirecovery](https://github.com/libimobiledevice/libirecovery)
 - [futurerestore (fork)](https://github.com/futurerestore/futurerestore)
@@ -72,4 +73,4 @@ python3 sunstorm.py -i 'IPSW' -t 'SHSH2' -b -d 'BOARDCONFIG' -id 'IDENTIFIER'
 
 [Arna13](https://github.com/Arna13) - Writing an easy to understand [guide](https://github.com/Arna13/sunst0rm-guide)
 
-swayea#1655 - Logo's
+[swayea](https://github.com/swayea) - Logo's
