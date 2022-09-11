@@ -88,7 +88,7 @@ fi
 cd bin
 
 if [ ! -e "./gaster" ]; then
-echo "gaster not found. Downloading ..."
+echo "gaster not found. Downloading..."
 git clone https://github.com/0x7ff/gaster.git gaster_git
 cd gaster_git
 make
@@ -100,7 +100,7 @@ xattr -d com.apple.quarantine gaster
 fi
 
 if [ ! -e "./iBoot64Patcher" ]; then
-echo "iBoot64Patcher not found. Downloading ..."
+echo "iBoot64Patcher not found. Downloading..."
 curl --progress-bar -OL https://nightly.link/Cryptiiiic/iBoot64Patcher/workflows/ci/main/iBoot64Patcher-macOS-x86_64-RELEASE.zip
 unzip iBoot64Patcher-macOS-x86_64-RELEASE.zip
 mv iBoot64Patcher-macOS-x86_64-RELEASE/iBoot64Patcher .
