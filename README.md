@@ -10,6 +10,7 @@ Based on [my guide](https://github.com/mineek/iostethereddowngrade)
 
 ## See [this guide](https://github.com/Arna13/sunst0rm-guide) for help
 ## You can also watch [this youtube video](https://www.youtube.com/watch?v=P1m_DsoWyb0) for a video tutorial
+## You can find an SEP and Baseband compatibility chart [here](https://docs.google.com/spreadsheets/d/1Mb1UNm6g3yvdQD67M413GYSaJ4uoNhLgpkc7YKi3LBs/edit#gid=0)
 ### If you still have problems, join the [Discord](https://discord.gg/TqVH6NBwS3) server for help
 
 ### Linux version by [MCApollo](https://github.com/MCApollo): [here](https://github.com/MCApollo/sunst0rm) ( only tested on arch )
