@@ -328,11 +328,11 @@ _pwnDevice
 echo "Continuing to futurerestore..."
 _runFuturerestore
 
-# @TODO: add kpp for legacy devices support
-#  if [[ "$device" == *"iPhone8,"* ]] || [[ "$device" == *"iPhone7,"* ]] || [[ "$device" == *"iPhone6,"* ]]; then
+# @TODO: add kpp for < A10 device support
+#  if [[ "$cpid" == *"8010"* ]] || [[ "$cpid" == *"8015"* ]]; then
 #   echo "Device has kpp"
-#   kpp=1
+#   use_kpp=0
 #  else
 #   echo "Device does not have kpp"
-#   kpp=0
+#   use_kpp=1
 #  fi
