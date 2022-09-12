@@ -329,6 +329,7 @@ echo "Continuing to futurerestore..."
 _runFuturerestore
 
 # @TODO: add kpp for < A10 device support
+# That would be A7, A8, A8X, A9, A9X
 #  if [[ "$cpid" == *"8010"* ]] || [[ "$cpid" == *"8015"* ]]; then
 #   echo "Device has kpp"
 #   use_kpp=0
