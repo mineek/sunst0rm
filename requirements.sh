@@ -19,12 +19,16 @@ cat <<EOF
 irecovery not found. Install from https://github.com/libimobiledevice/libirecovery
 Or use these following commands to install:
 
-$ brew install pkg-config autoconf automake git libusb libtool
-$ git clone https://github.com/libimobiledevice/libirecovery.git
-$ cd libirecovery
-$ ./autogen.sh
-$ make
-$ sudo make install
+  brew install autoconf automake libtool pkg-config cmake libzip openssl libplist libpng
+  sudo cp -r $(brew --prefix openssl)/lib/pkgconfig/* /usr/local/lib/pkgconfig/
+  git clone https://github.com/libimobiledevice/libirecovery.git
+  cd libirecovery
+  ./autogen.sh --without-cython --enable-static --disable-shared CFLAGS="-fPIC" CXXFLAGS="-fPIC"
+  make
+  rm -rf src/.libs/*.dylib #there is not such thing as no-dynamic on macOS
+  sudo make install
+  cd ..
+  rm -rf libirecovery
 
 EOF
 exit
@@ -84,7 +88,7 @@ fi
 cd bin
 
 if [ ! -e "./gaster" ]; then
-echo "gaster not found. Downloading ..."
+echo "gaster not found. Downloading..."
 git clone https://github.com/0x7ff/gaster.git gaster_git
 cd gaster_git
 make
@@ -96,12 +100,11 @@ xattr -d com.apple.quarantine gaster
 fi
 
 if [ ! -e "./iBoot64Patcher" ]; then
-echo "iBoot64Patcher not found. Downloading ..."
+echo "iBoot64Patcher not found. Downloading..."
 curl --progress-bar -OL https://nightly.link/Cryptiiiic/iBoot64Patcher/workflows/ci/main/iBoot64Patcher-macOS-x86_64-RELEASE.zip
 unzip iBoot64Patcher-macOS-x86_64-RELEASE.zip
-mv -v iBoot64Patcher-macOS-x86_64-RELEASE/iBoot64Patcher ../
-rm -rf iBoot64Patcher-macOS-x86_64-RELEASE/
-rm iBoot64Patcher-macOS-x86_64-RELEASE.zip
+mv iBoot64Patcher-macOS-x86_64-RELEASE/iBoot64Patcher .
+rm -rf iBoot64Patcher-*
 chmod 755 iBoot64Patcher
 xattr -d com.apple.quarantine iBoot64Patcher
 fi
