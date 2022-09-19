@@ -1,9 +1,6 @@
-IM4M
-*.ipsw
-work
-*.shsh2
-.DS_Store
 boot
 restore
 bin
+tickets
 .requirements_done
+.DS_Store
