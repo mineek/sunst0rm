@@ -32,4 +32,26 @@ irecovery -c "firmware"
 sleep 1
 irecovery -f boot/krnlboot.img4
 sleep 1
+echo "Flashing rainbow because it's fun..."
+sleep 3
+#Rainbow flash sequence
+for i in 1 2 3 4 5
+do
+    irecovery -c "bgcolor 255 0 0"
+    sleep 0.1
+    irecovery -c "bgcolor 255 165 0"
+    sleep 0.1
+    irecovery -c "bgcolor 255 255 0"
+    sleep 0.1
+    irecovery -c "bgcolor 0 255 0"
+    sleep 0.1
+    irecovery -c "bgcolor 0 0 255"
+    sleep 0.1
+    irecovery -c "bgcolor 160 32 240"
+    sleep 0.1
+done
+#Set background color back to black and finish booting
+irecovery -c "bgcolor 0 0 0"
+echo "Funtime over! Booting..."
+sleep 1
 irecovery -c "bootx"
