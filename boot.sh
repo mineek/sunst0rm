@@ -17,6 +17,9 @@ sleep 2
 if [[ "$cpid" == *"0x80"* ]]; then
 irecovery -f boot/iBEC.img4
 sleep 2
+irecovery -f boot/bootlogo.img4
+irecovery -c "bgcolor 0 0 0"
+irecovery -c "setpicture 0x1"
 irecovery -c "go"
 sleep 5
 fi
