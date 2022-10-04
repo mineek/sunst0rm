@@ -82,7 +82,7 @@ else
 fi
 
 if [ ! "$(command -v futurerestore)" ] && [ ! -e "$HOME/FutureRestoreGUI/extracted/futurerestore" ]; then
-  cecho "RED" "futurerestore not found. Download at https://github.com/futurerestore/futurerestore"
+  cecho "YELLOW" "futurerestore not found. Download at https://github.com/futurerestore/futurerestore"
   sleep 5
   open https://github.com/futurerestore/futurerestore
   exit 3
@@ -143,7 +143,7 @@ fi
 
 if [ ! -e "/usr/local/bin/img4" ]; then
   cecho "YELLOW" "[!] img4 not found. Downloading..."
-  curl --progress-bar -o img4lib.tar.gz -L https://github.com/xerub/img4lib/releases/download/1.0/img4lib-2020-10-27.tar.gz || error_exit "Download failed."
+  curl --progress-bar -o img4lib.tar.gz -L https://github.com/xerub/img4lib/releases/download/1.0/img4lib-2020-10-27.tar.gz || error_exit "[!] Download failed."
   tar -xvf img4lib.tar.gz
   sudo mkdir -p /usr/local/bin
   mv -v img4lib/apple/img4 /usr/local/bin/
@@ -156,7 +156,7 @@ fi
 
 if [ ! -e "/usr/local/bin/img4tool" ]; then
   cecho "YELLOW" "[!] img4tool not found. Downloading..."
-  curl --progress-bar -OL https://github.com/tihmstar/img4tool/releases/download/197/buildroot_macos-latest.zip || error_exit "Download failed."
+  curl --progress-bar -OL https://github.com/tihmstar/img4tool/releases/download/197/buildroot_macos-latest.zip || error_exit "[!] Download failed."
   unzip buildroot_macos-latest.zip
   usr_local=buildroot_macos-latest/usr/local
   mv -v $usr_local/bin/img4tool /usr/local/bin/
@@ -244,7 +244,7 @@ if [ ! -e "./restored_external64_patcher" ]; then
 fi
 
 if [ ! -e "./ldid2" ] && [ "$(command -v ldid)" != "/opt/procursus/bin/ldid" ]; then
-  cecho "YELLOW" "ldid2 not found. Downloading..."
+  cecho "YELLOW" "[!] ldid2 not found. Downloading..."
   if [ "$OS" = "macOS-x86_64" ]; then 
   OS=macos_x86_64
   elif [ "$OS" = "macOS-arm64" ]; then
@@ -254,7 +254,7 @@ if [ ! -e "./ldid2" ] && [ "$(command -v ldid)" != "/opt/procursus/bin/ldid" ]; 
   if [ "$pkg" = "sudo apt" ]; then
   $pkg install ldid
   else
-  curl --progress-bar -o ldid2 -L https://github.com/ProcursusTeam/ldid/releases/download/v2.1.5-procursus5/ldid_${OS} || error_exit "Download failed."
+  curl --progress-bar -o ldid2 -L https://github.com/ProcursusTeam/ldid/releases/download/v2.1.5-procursus5/ldid_${OS} || error_exit "[!] Download failed."
   chmod 755 ldid2
   xattr -d com.apple.quarantine ldid2
   fi
@@ -264,7 +264,7 @@ fi
 
 if [ ! -e "./tsschecker" ]; then
   cecho "YELLOW" "tsschecker not found. Downloading..."
-  curl --progress-bar -o tsschecker.zip -L https://github.com/tihmstar/tsschecker/releases/download/304/tsschecker_macOS_v304.zip || error_exit "Download failed."
+  curl --progress-bar -o tsschecker.zip -L https://github.com/tihmstar/tsschecker/releases/download/304/tsschecker_macOS_v304.zip || error_exit "[!] Download failed."
   unzip tsschecker.zip
   rm tsschecker.zip
   chmod 755 tsschecker
