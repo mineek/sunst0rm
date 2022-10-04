@@ -74,7 +74,6 @@ _dfuWait() {
 
 _dfuWait
 
-# @TODO: ensure correct irecovery version is installed
 _deviceInfo() {
   irecovery -q | grep "$1" | sed "s/$1: //"
 }
