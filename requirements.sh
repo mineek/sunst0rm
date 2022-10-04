@@ -76,7 +76,7 @@ else
       exec ./procursus-install-macOS.sh
     fi
   fi
-  cecho "YELLOW" "Homebrew not found. Install instructions can be found at https://brew.sh"
+  cecho "YELLOW" "[!] Homebrew not found. Install instructions can be found at https://brew.sh"
   exit 3
 fi
 
@@ -120,7 +120,7 @@ else
 fi
 
 if ! command -v python3 > /dev/null; then
-  cecho "YELLOW" "python3 not found. Installing..."
+  cecho "YELLOW" "[!] python3 not found. Installing..."
   $pkg install python3
   else 
   cecho "GREEN" "[!] python3 is installed!"
