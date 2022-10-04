@@ -2,7 +2,7 @@
 
 error_exit() {
   echo "Error: $1"
-  exit 1
+  clean
 }
 
 macOSversion=$(sw_vers | head -n2 | tail -n1 | cut -c 17-)

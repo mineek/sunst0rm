@@ -19,7 +19,6 @@ error_exit()
     exit 1
 }
 
-
 macOSversion=$(sw_vers | head -n2 | tail -n1 | cut -c 17-)
 verscheck=$(bc <<<"${macOSversion} < 10.14")
 
@@ -139,6 +138,11 @@ if [ "$(python3 -m pip list | grep -c "pyimg4")" == 0 ]; then
   python3 -m pip install pyimg4 || error_exit "[!] pyimg4 failed to install"
   else 
   cecho "GREEN" "[!] pyimg4 is installed!" 
+fi
+
+if [[ ! -d "/usr/local/bin" ]]; then
+echo "[!] /usr/local/bin does not exist, creating it now... (please enter your password)"
+sudo mkdir -p /usr/local/bin
 fi
 
 if [ ! -e "/usr/local/bin/img4" ]; then
