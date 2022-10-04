@@ -15,8 +15,21 @@ if [ -a .requirements_done ]; then
   clear
 else
   echo "Run \$ ./requirements.sh"
-  exit
+  exit 2
 fi
+
+if [ ! "$(command -v futurerestore)" ] && [ -z "$HOME/FutureRestoreGUI/.extracted/futurerestore" ]; then
+  echo "futurerestore not found. Download at https://github.com/futurerestore/futurerestore"
+  sleep 5
+  open https://github.com/futurerestore/futurerestore
+  exit 1
+elif command -v futurerestore; then
+  futurerestore=$(command -v futurerestore)
+elif [ -z "$HOME/FutureRestoreGUI/.extracted/futurerestore" ]; then
+  futurerestore="$HOME/FutureRestoreGUI/.extracted/futurerestore"
+fi
+
+
 
 arg2="<ipsw path>"
 
@@ -61,12 +74,12 @@ _dfuWait
 # @TODO: ensure correct irecovery version is installed
 _deviceInfo()
 {
-  echo $(irecovery -q | grep "$1" | sed "s/$1: //")
+  irecovery -q | grep "$1" | sed "s/$1: //"
 }
-cpid=`_deviceInfo "CPID"`
-device=`_deviceInfo "PRODUCT"`
-ecid=`_deviceInfo "ECID"`
-model=`_deviceInfo "MODEL"`
+cpid=$(_deviceInfo "CPID")
+device=$(_deviceInfo "PRODUCT")
+ecid=$(_deviceInfo "ECID")
+model=$(_deviceInfo "MODEL")
 echo "Found device: |$device|$cpid|$model|$ecid|"
 
 _pwnDevice()
@@ -158,7 +171,7 @@ EOF
   read -p "Press ENTER to continue <-"
   rm -rf /tmp/futurerestore/
   restore_ipsw=$(cat restore/ipsw)
-  futurerestore -t tickets/ticket.shsh2 --use-pwndfu --skip-blob \
+  $futurerestore -t tickets/ticket.shsh2 --use-pwndfu --skip-blob \
   --rdsk restore/rdsk.im4p --rkrn restore/rkrn.im4p \
   --latest-sep --latest-baseband $restore_ipsw;
   exit
