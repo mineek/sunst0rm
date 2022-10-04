@@ -29,10 +29,10 @@ elif [ -e "$HOME/FutureRestoreGUI/.extracted/futurerestore" ]; then
   futurerestore="$HOME/FutureRestoreGUI/.extracted/futurerestore"
 fi
 
-if [ ! -e "bin/ldid2" ] && [ "$(command -v ldid)" != "/opt/procursus/bin/ldid" ]; then
-  echo "please run ./requirements.sh (ldid2 is missing)"
-elif [ -e .bin/ldid2 ]; then
-  ldid="./bin/ldid2"
+if [ ! -e "bin/ldid" ] && [ "$(command -v ldid)" != "/opt/procursus/bin/ldid" ]; then
+  echo "please run ./requirements.sh (ldid is missing)"
+elif [ -e .bin/ldid ]; then
+  ldid="./bin/ldid"
 elif [ "$(command -v ldid)" = "/opt/procursus/bin/ldid" ]; then
   ldid=/opt/procursus/bin/ldid
 fi

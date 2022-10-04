@@ -247,8 +247,8 @@ if [ ! -e "./restored_external64_patcher" ]; then
   cecho "GREEN" "[!] restored_external64_patcher found!"
 fi
 
-if [ ! -e "./ldid2" ] && [ "$(command -v ldid)" != "/opt/procursus/bin/ldid" ]; then
-  cecho "YELLOW" "[!] ldid2 not found. Downloading..."
+if [ ! -e "./ldid" ] && [ "$(command -v ldid)" != "/opt/procursus/bin/ldid" ]; then
+  cecho "YELLOW" "[!] ldid not found. Downloading..."
   if [ "$OS" = "macOS-x86_64" ]; then 
   OS=macos_x86_64
   elif [ "$OS" = "macOS-arm64" ]; then
@@ -258,12 +258,12 @@ if [ ! -e "./ldid2" ] && [ "$(command -v ldid)" != "/opt/procursus/bin/ldid" ]; 
   if [ "$pkg" = "sudo apt" ]; then
   $pkg install ldid
   else
-  curl --progress-bar -o ldid2 -L https://github.com/ProcursusTeam/ldid/releases/download/v2.1.5-procursus5/ldid_${OS} || error_exit "[!] Download failed."
-  chmod 755 ldid2
-  xattr -d com.apple.quarantine ldid2
+  curl --progress-bar -o ldid -L https://github.com/ProcursusTeam/ldid/releases/download/v2.1.5-procursus5/ldid_${OS} || error_exit "[!] Download failed."
+  chmod 755 ldid
+  xattr -d com.apple.quarantine ldid
   fi
    else
-  cecho "GREEN" "[!] ldid2 found!"
+  cecho "GREEN" "[!] ldid found!"
 fi
 
 if [ ! -e "./tsschecker" ]; then
