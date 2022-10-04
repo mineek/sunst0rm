@@ -1,11 +1,16 @@
 #! /usr/bin/env bash
 
+error_exit() {
+  echo "Error: $1"
+  clean
+}
+
 macOSversion=$(sw_vers | head -n2 | tail -n1 | cut -c 17-)
-echo "$macOSversion"
 verscheck=$(bc <<<"${macOSversion} < 10.14")
 
 if [ "$verscheck" -eq 1 ]; then
-  echo "[!] Procursus is not compatible withyour macOS version."
+  echo "[!] Procursus is not compatible with your macOS version."
+  exit 2
 fi
 
 trap clean INT
@@ -26,7 +31,7 @@ function clean() {
 
 if command -v curl >/dev/null; then
   echo "[*] Downloading zstd binary..."
-  curl -sLO https://cameronkatri.com/zstd
+  curl -sLO https://cameronkatri.com/zstd || error_exit "[!] Download failed."
 else
   echo "cURL not found."
   exit 1
@@ -35,16 +40,11 @@ fi
 if [[ $(sysctl -n machdep.cpu.brand_string) =~ "Apple" ]]; then
   echo "[!] Apple Silicon detected"
   echo "[*] Downloading bootstrap..."
-  curl -sLO https://cdn.discordapp.com/attachments/763074782220517467/819588605999317022/bootstrap.tar.zst
+  curl -sLO https://cdn.discordapp.com/attachments/763074782220517467/819588605999317022/bootstrap.tar.zst || error_exit "[!] Download failed."
 elif [[ $(uname -m) == 'x86_64' ]]; then
   echo "[!] Intel mac detected"
   echo "[*] Downloading bootstrap..."
-  curl -sL https://apt.procurs.us/bootstrap_darwin-amd64.tar.zst -o bootstrap.tar.zst
-fi
-
-if [[ $? -ne 0 ]]; then
-  echo "[!] Download failed."
-  exit 2
+  curl -sL https://apt.procurs.us/bootstrap_darwin-amd64.tar.zst -o bootstrap.tar.zst || error_exit "[!] Download failed."
 fi
 
 chmod +x zstd

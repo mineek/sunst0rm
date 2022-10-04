@@ -18,24 +18,29 @@ else
   exit 2
 fi
 
-if [ ! "$(command -v futurerestore)" ] && [ -z "$HOME/FutureRestoreGUI/.extracted/futurerestore" ]; then
+if [ ! "$(command -v futurerestore)" ] && [ ! -e "$HOME/FutureRestoreGUI/extracted/futurerestore" ]; then
   echo "futurerestore not found. Download at https://github.com/futurerestore/futurerestore"
   sleep 5
   open https://github.com/futurerestore/futurerestore
   exit 1
 elif command -v futurerestore; then
   futurerestore=$(command -v futurerestore)
-elif [ -z "$HOME/FutureRestoreGUI/.extracted/futurerestore" ]; then
+elif [ -e "$HOME/FutureRestoreGUI/.extracted/futurerestore" ]; then
   futurerestore="$HOME/FutureRestoreGUI/.extracted/futurerestore"
 fi
 
-
+if [ ! -e "bin/ldid" ] && [ "$(command -v ldid)" != "/opt/procursus/bin/ldid" ]; then
+  echo "please run ./requirements.sh (ldid is missing)"
+elif [ -e .bin/ldid ]; then
+  ldid="./bin/ldid"
+elif [ "$(command -v ldid)" = "/opt/procursus/bin/ldid" ]; then
+  ldid=/opt/procursus/bin/ldid
+fi
 
 arg2="<ipsw path>"
 
-_usage()
-{
-    cat <<EOF
+_usage() {
+  cat <<EOF
 ================================================================================
 Usage:
     Restoring: sunst0rm.sh restore $arg2
@@ -50,14 +55,12 @@ if [ -z "$1" ]; then
   exit
 fi
 
-_eexit()
-{
+_eexit() {
   echo "[EXITING] $1"
   exit
 }
 
-_dfuWait()
-{
+_dfuWait() {
   # clear
   echo "==================================================================================================="
   echo "Make sure to reboot device into DFU Mode."
@@ -72,8 +75,7 @@ _dfuWait()
 _dfuWait
 
 # @TODO: ensure correct irecovery version is installed
-_deviceInfo()
-{
+_deviceInfo() {
   irecovery -q | grep "$1" | sed "s/$1: //"
 }
 cpid=$(_deviceInfo "CPID")
@@ -82,8 +84,7 @@ ecid=$(_deviceInfo "ECID")
 model=$(_deviceInfo "MODEL")
 echo "Found device: |$device|$cpid|$model|$ecid|"
 
-_pwnDevice()
-{
+_pwnDevice() {
   echo "Starting exploit, device should be in pwnd DFU Mode after this."
   ./bin/gaster pwn
 }
@@ -104,7 +105,7 @@ if [ "$1" == "boot" ]; then
     irecovery -f ibec.img4
     sleep 2
 
-    if [[ $cpid == "0x8010" ]] || [[ $cpid == "0x8015" ]];then
+    if [[ $cpid == "0x8010" ]] || [[ $cpid == "0x8015" ]]; then
       irecovery -f ibec.img4
       sleep 2
       irecovery -c "go"
@@ -156,8 +157,7 @@ if [ "$1" != "restore" ]; then
   exit
 fi
 
-_runFuturerestore()
-{
+_runFuturerestore() {
   cat <<EOF
 ===================================================================================================
 #                          WARNING: Starting 'futurerestore' command !
@@ -172,8 +172,8 @@ EOF
   rm -rf /tmp/futurerestore/
   restore_ipsw=$(cat restore/ipsw)
   $futurerestore -t tickets/ticket.shsh2 --use-pwndfu --skip-blob \
-  --rdsk restore/rdsk.im4p --rkrn restore/rkrn.im4p \
-  --latest-sep --latest-baseband $restore_ipsw;
+    --rdsk restore/rdsk.im4p --rkrn restore/rkrn.im4p \
+    --latest-sep --latest-baseband $restore_ipsw
   exit
 }
 
@@ -245,12 +245,11 @@ until [[ $ret != 0 ]]; do
 done
 
 if [ $ret != 1 ]; then
-_eexit "Restore manifest not found."
+  _eexit "Restore manifest not found."
 fi
 
-_extractFromManifest()
-{
-    echo $(plutil -extract "BuildIdentities.$manifest_index.Manifest.$1.Info.Path" xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
+_extractFromManifest() {
+  echo $(plutil -extract "BuildIdentities.$manifest_index.Manifest.$1.Info.Path" xml1 -o - work/BuildManifest.plist | xmllint -xpath '/plist/string/text()' -)
 }
 
 ibss=$(_extractFromManifest "iBSS")
@@ -315,12 +314,12 @@ mkdir work/ramdisk
 hdiutil attach work/ramdisk.dmg -mountpoint work/ramdisk
 sleep 5
 ./bin/asr64_patcher work/ramdisk/usr/sbin/asr work/patched_asr
-./bin/ldid2 -e work/ramdisk/usr/sbin/asr > work/asr.plist
-./bin/ldid2 -Swork/asr.plist work/patched_asr
+$ldid -e work/ramdisk/usr/sbin/asr >work/asr.plist
+$ldid -Swork/asr.plist work/patched_asr
 cp work/ramdisk/usr/local/bin/restored_external work/restored_external
 ./bin/restored_external64_patcher work/restored_external work/patched_restored_external
-./bin/ldid2 -e work/restored_external > work/restored_external.plist
-./bin/ldid2 -Swork/restored_external.plist work/patched_restored_external
+$ldid -e work/restored_external >work/restored_external.plist
+$ldid -Swork/restored_external.plist work/patched_restored_external
 chmod 755 work/patched_restored_external
 chmod 755 work/patched_asr
 rm work/ramdisk/usr/sbin/asr
@@ -335,7 +334,7 @@ pyimg4 im4p create -i work/kcache.patched -o restore/rkrn.im4p -f rkrn --lzss
 rm IM4M
 rm -rf work/
 cp $shsh tickets/ticket.shsh2
-echo $ipsw > restore/ipsw
+echo $ipsw >restore/ipsw
 _dfuWait
 _pwnDevice
 echo "Continuing to futurerestore..."
