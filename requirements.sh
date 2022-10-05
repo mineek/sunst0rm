@@ -73,7 +73,8 @@ else
     echo "Would you like to install Procursus?"
     read -p "[y/n]" installpro
     if echo "$installpro" | grep '^[Yy]\?$'; then
-      exec ./procursus-install-macOS.sh
+      ./procursus-install-macOS.sh
+      pkg="sudo apt"
     fi
   fi
   cecho "YELLOW" "[!] Homebrew not found. Install instructions can be found at https://brew.sh"
@@ -174,7 +175,11 @@ if [ ! -e "/usr/local/bin/img4" ]; then
   xattr -d com.apple.quarantine /usr/local/bin/img4
 fi
 
-if [ ! -e "/usr/local/bin/img4tool" ]; then
+if ! command -v img4tool > /dev/null; then
+if [ "$pkg" = "sudo apt" ]; then
+  cecho "YELLOW" "[!] img4tool not found. Installing using apt..."
+$pkg install img4tool
+  else
   cecho "YELLOW" "[!] img4tool not found. Downloading..."
   curl --progress-bar -OL https://github.com/tihmstar/img4tool/releases/download/197/buildroot_macos-latest.zip || error_exit "[!] Download failed."
   unzip buildroot_macos-latest.zip
@@ -187,6 +192,7 @@ if [ ! -e "/usr/local/bin/img4tool" ]; then
   rm buildroot_macos-latest.zip
   chmod 755 /usr/local/bin/img4tool
   xattr -d com.apple.quarantine /usr/local/bin/img4tool
+  fi
 fi
 
 if [ ! -d bin ]; then
