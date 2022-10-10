@@ -234,7 +234,7 @@ def prep_boot(ipsw, blob, board, kpp, identifier, legacy):
     # get ProductBuildVersion from manifest
     print('[*] Getting ProductBuildVersion')
     productbuildversion = manifest.getProductBuildVersion()
-    ibss_iv, ibss_key, ibec_iv, ibec_key = api.get_keys(
+    ibss_iv, ibss_key, ibec_iv, ibec_key = utils.api.get_keys(
         identifier, board, productbuildversion)
 
     # get ibec and ibss from manifest
