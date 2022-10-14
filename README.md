@@ -19,6 +19,7 @@ Based on [my guide](https://github.com/mineek/iostethereddowngrade)
 ## Notes
 - It is a *tethered* downgrade meaning you will have to boot tethered every single time from your PC if your battery dies or if you reboot your phone.
 - On A10-A11 devices crucial functionality such as the Home Button, Audio, Microphone, Vibration does NOT work at the moment.
+- On iPhone X touch doesn't work but iPhone 8 and 8 Plus are fine.
 - You should NOT be tether downgrading your main device it is only recommended to tether downgrade a second device.
 - For some frequently asked fixes go [here](https://github.com/Arna13/sunst0rm-guide/blob/main/docs/misc/EXTRAS.md) for help.
 ## Requirements:
