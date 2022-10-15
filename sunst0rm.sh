@@ -31,7 +31,7 @@ fi
 
 if [ ! -e "bin/ldid" ] && [ "$(command -v ldid)" != "/opt/procursus/bin/ldid" ]; then
   echo "please run ./requirements.sh (ldid is missing)"
-elif [ -e .bin/ldid ]; then
+elif [ -e ./bin/ldid ]; then
   ldid="./bin/ldid"
 elif [ "$(command -v ldid)" = "/opt/procursus/bin/ldid" ]; then
   ldid=/opt/procursus/bin/ldid
