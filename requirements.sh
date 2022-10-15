@@ -1,22 +1,22 @@
 #!/bin/bash
+trap exit INT
 
-cecho(){
-    RED="\033[0;31m"
-    GREEN="\033[0;32m"  # <-- [0 means not bold
-    YELLOW="\033[0;33m" # <-- [1 means bold
-    CYAN="\033[0;36m"
-    # ... Add more colors if you like
+cecho() {
+  RED="\033[0;31m"
+  GREEN="\033[0;32m"  # <-- [0 means not bold
+  YELLOW="\033[0;33m" # <-- [1 means bold
+  CYAN="\033[0;36m"
+  # ... Add more colors if you like
 
-    NC="\033[0m" # No Color
+  NC="\033[0m" # No Color
 
-    # printf "${(P)1}${2} ${NC}\n" # <-- zsh
-    printf "${!1}${2} ${NC}\n" # <-- bash
+  # printf "${(P)1}${2} ${NC}\n" # <-- zsh
+  printf "${!1}${2} ${NC}\n" # <-- bash
 }
 
-error_exit()
-{
-    cecho "RED" "Error: $1"
-    exit 1
+error_exit() {
+  cecho "RED" "Error: $1"
+  exit 1
 }
 
 macOSversion=$(sw_vers | head -n2 | tail -n1 | cut -c 17-)
@@ -73,7 +73,8 @@ else
     echo "Would you like to install Procursus?"
     read -p "[y/n]" installpro
     if echo "$installpro" | grep '^[Yy]\?$'; then
-      exec ./procursus-install-macOS.sh
+      ./procursus-install-macOS.sh
+      pkg="sudo apt"
     fi
   fi
   cecho "YELLOW" "[!] Homebrew not found. Install instructions can be found at https://brew.sh"
@@ -91,38 +92,54 @@ elif [ -e "$HOME/FutureRestoreGUI/extracted/futurerestore" ]; then
   cecho "GREEN" "[!] Located futurerestore downloaded by FutureRestoreGUI."
 fi
 
-if command -v irecovery >/dev/null; then
+if command -v irecovery >/dev/null &&  irecovery --version | grep 1.0.1 > /dev/null ; then
   cecho "GREEN" "[!] irecovery is installed!"
 else
-  cecho "YELLOW" "[!] irecovery not found. Installing..."
   if [ "$pkg" = "sudo apt" ]; then
+  cecho "YELLOW" "[!] irecovery not found. Installing..."
     $pkg install libirecovery-utils
   elif [ "$pkg" = "brew" ]; then
-    $pkg install libirecovery
+    cat <<EOF
+[!] brew's version of irecovery is outdated and incompatible with sunst0rm.
+Install from https://github.com/libimobiledevice/libirecovery
+Or use these following commands to install:
+  brew install autoconf automake libtool pkg-config cmake libzip openssl libplist libpng
+  sudo cp -r $(brew --prefix openssl)/lib/pkgconfig/* /usr/local/lib/pkgconfig/
+  git clone https://github.com/libimobiledevice/libirecovery.git
+  cd libirecovery
+  ./autogen.sh --without-cython --enable-static --disable-shared CFLAGS="-fPIC" CXXFLAGS="-fPIC"
+  make
+  rm -rf src/.libs/*.dylib #there is not such thing as no-dynamic on macOS
+  sudo make install
+  cd ..
+  rm -rf libirecovery
+EOF
+error_exit "[!] irecovery version mismatch."
+
   fi
 fi
 
-if command -v git > /dev/null; then
+if command -v git >/dev/null; then
   cecho "GREEN" "[!] git is installed!"
 else
   cecho "YELLOW" "[!] git not found. Installing..."
   $pkg install git
 fi
 
-if command -v clang > /dev/null; then
+if command -v clang >/dev/null; then
   cecho "GREEN" "[!] clang is installed!"
 else
-    if [ "$pkg" = "sudo apt" ]; then
+  if [ "$pkg" = "sudo apt" ]; then
     $pkg install clang
   elif [ "$pkg" = "brew" ]; then
     $pkg install llvm
   fi
 fi
 
-if ! command -v python3 > /dev/null; then
+if ! command -v python3 >/dev/null; then
   cecho "YELLOW" "[!] python3 not found. Installing..."
   $pkg install python3
-  else 
+else
   cecho "GREEN" "[!] python3 is installed!"
 fi
 
@@ -136,13 +153,13 @@ fi
 if [ "$(python3 -m pip list | grep -c "pyimg4")" == 0 ]; then
   cecho "YELLOW" "[!] pyimg4 not found. Installing..."
   python3 -m pip install pyimg4 || error_exit "[!] pyimg4 failed to install"
-  else 
-  cecho "GREEN" "[!] pyimg4 is installed!" 
+else
+  cecho "GREEN" "[!] pyimg4 is installed!"
 fi
 
 if [[ ! -d "/usr/local/bin" ]]; then
-echo "[!] /usr/local/bin does not exist, creating it now... (please enter your password)"
-sudo mkdir -p /usr/local/bin
+  echo "[!] /usr/local/bin does not exist, creating it now... (please enter your password)"
+  sudo mkdir -p /usr/local/bin
 fi
 
 if [ ! -e "/usr/local/bin/img4" ]; then
@@ -158,7 +175,11 @@ if [ ! -e "/usr/local/bin/img4" ]; then
   xattr -d com.apple.quarantine /usr/local/bin/img4
 fi
 
-if [ ! -e "/usr/local/bin/img4tool" ]; then
+if ! command -v img4tool > /dev/null; then
+if [ "$pkg" = "sudo apt" ]; then
+  cecho "YELLOW" "[!] img4tool not found. Installing using apt..."
+$pkg install img4tool
+  else
   cecho "YELLOW" "[!] img4tool not found. Downloading..."
   curl --progress-bar -OL https://github.com/tihmstar/img4tool/releases/download/197/buildroot_macos-latest.zip || error_exit "[!] Download failed."
   unzip buildroot_macos-latest.zip
@@ -171,6 +192,7 @@ if [ ! -e "/usr/local/bin/img4tool" ]; then
   rm buildroot_macos-latest.zip
   chmod 755 /usr/local/bin/img4tool
   xattr -d com.apple.quarantine /usr/local/bin/img4tool
+  fi
 fi
 
 if [ ! -d bin ]; then
@@ -189,7 +211,7 @@ if [ ! -e "./gaster" ]; then
   rm -rf gaster_git/
   chmod 755 gaster
   xattr -d com.apple.quarantine gaster
-  else
+else
   cecho "GREEN" "[!] gaster found!"
 fi
 
@@ -201,7 +223,7 @@ if [ ! -e "./iBoot64Patcher" ]; then
   rm -rf iBoot64Patcher-*
   chmod 755 iBoot64Patcher
   xattr -d com.apple.quarantine iBoot64Patcher
-   else
+else
   cecho "GREEN" "[!] iBoot64Patcher found!"
 fi
 
@@ -215,7 +237,7 @@ if [ ! -e "./Kernel64Patcher" ]; then
   rm -rf Kernel64Patcher_git/
   chmod 755 Kernel64Patcher
   xattr -d com.apple.quarantine Kernel64Patcher
-   else
+else
   cecho "GREEN" "[!] Kernel64Patcher found!"
 fi
 
@@ -229,7 +251,7 @@ if [ ! -e "./asr64_patcher" ]; then
   rm -rf asr64_patcher_git/
   chmod 755 asr64_patcher
   xattr -d com.apple.quarantine asr64_patcher
-   else
+else
   cecho "GREEN" "[!] asr64_patcher found!"
 fi
 
@@ -243,26 +265,26 @@ if [ ! -e "./restored_external64_patcher" ]; then
   rm -rf restored_external64patcher_git/
   chmod 755 restored_external64_patcher
   xattr -d com.apple.quarantine restored_external64_patcher
-   else
+else
   cecho "GREEN" "[!] restored_external64_patcher found!"
 fi
 
 if [ ! -e "./ldid" ] && [ "$(command -v ldid)" != "/opt/procursus/bin/ldid" ]; then
   cecho "YELLOW" "[!] ldid not found. Downloading..."
-  if [ "$OS" = "macOS-x86_64" ]; then 
-  OS=macos_x86_64
+  if [ "$OS" = "macOS-x86_64" ]; then
+    OS=macos_x86_64
   elif [ "$OS" = "macOS-arm64" ]; then
-  OS=macos_arm64
+    OS=macos_arm64
   fi
 
   if [ "$pkg" = "sudo apt" ]; then
-  $pkg install ldid
+    $pkg install ldid
   else
-  curl --progress-bar -o ldid -L https://github.com/ProcursusTeam/ldid/releases/download/v2.1.5-procursus5/ldid_${OS} || error_exit "[!] Download failed."
-  chmod 755 ldid
-  xattr -d com.apple.quarantine ldid
+    curl --progress-bar -o ldid -L https://github.com/ProcursusTeam/ldid/releases/download/v2.1.5-procursus5/ldid_${OS} || error_exit "[!] Download failed."
+    chmod 755 ldid
+    xattr -d com.apple.quarantine ldid
   fi
-   else
+else
   cecho "GREEN" "[!] ldid found!"
 fi
 
@@ -273,7 +295,7 @@ if [ ! -e "./tsschecker" ]; then
   rm tsschecker.zip
   chmod 755 tsschecker
   xattr -d com.apple.quarantine tsschecker
-   else
+else
   cecho "GREEN" "[!] tsschecker found!"
 fi
 
