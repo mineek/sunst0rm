@@ -177,14 +177,14 @@ def prep_restore(ipsw, blob, board, kpp, legacy, skip_baseband):
         # ask user if they are in pwndfu with sigchecks removed
         print('[?] Are you in pwndfu with sigchecks removed? (y/n)')
         if input() == 'y':
-            # restore the device using futurestore like this: futurerestore -t blob --use-pwndfu --skip-blob --rdsk ramdisk.im4p --rkrn krnl.im4p --latest-sep --latest-baseband ipsw.ipsw
+            # restore the device using futurestore like this: futurerestore -t blob --use-pwndfu --skip-blob --rdsk ramdisk.im4p --rkrn krnl.im4p --custom-latest-beta --custom-latest-buildid 19H12 --no-rsep --latest-sep --latest-baseband ipsw.ipsw
             print('[*] Restoring Device')
             if skip_baseband:
                 subprocess.run(['/usr/local/bin/futurerestore', '-t', blob, '--use-pwndfu', '--skip-blob', '--rdsk',
-                               'work/ramdisk.im4p', '--rkrn', 'work/krnl.im4p', '--latest-sep', '--no-baseband', ipsw])
+                               'work/ramdisk.im4p', '--rkrn', 'work/krnl.im4p', '--custom-latest-beta', '--custom-latest-buildid 19H12', '--no-rsep' '--latest-sep', '--no-baseband', ipsw])
             else:
                 subprocess.run(['/usr/local/bin/futurerestore', '-t', blob, '--use-pwndfu', '--skip-blob', '--rdsk',
-                               'work/ramdisk.im4p', '--rkrn', 'work/krnl.im4p', '--latest-sep', '--latest-baseband', ipsw])
+                               'work/ramdisk.im4p', '--rkrn', 'work/krnl.im4p', '--custom-latest-beta', '--custom-latest-buildid 19H12', '--latest-sep', '--latest-baseband', ipsw])
             # exit
             print('[*] Done!')
             # clean
@@ -197,9 +197,9 @@ def prep_restore(ipsw, blob, board, kpp, legacy, skip_baseband):
             print('[!] You need to enter pwndfu')
             # tell the user how they can restore the device later
             if skip_baseband:
-                print('[!] You can restore the device later using futurestore like this: futurerestore -t blob --use-pwndfu --skip-blob --rdsk work/ramdisk.im4p --rkrn work/krnl.im4p --latest-sep --no-baseband ipsw.ipsw')
+                print('[!] You can restore the device later using futurestore like this: futurerestore -t blob --use-pwndfu --skip-blob --rdsk work/ramdisk.im4p --rkrn work/krnl.im4p --custom-latest-beta --custom-latest-buildid 19H12 --latest-sep --no-baseband ipsw.ipsw')
             else:
-                print('[!] You can restore the device later using futurestore like this: futurerestore -t blob --use-pwndfu --skip-blob --rdsk work/ramdisk.im4p --rkrn work/krnl.im4p --latest-sep --latest-baseband ipsw.ipsw')
+                print('[!] You can restore the device later using futurestore like this: futurerestore -t blob --use-pwndfu --skip-blob --rdsk work/ramdisk.im4p --rkrn work/krnl.im4p --custom-latest-beta --custom-latest-buildid 19H12 --latest-sep --latest-baseband ipsw.ipsw')
             # exit
             sys.exit(0)
     else:
@@ -391,5 +391,5 @@ def main():
 
 if __name__ == '__main__':
     print("sunst0rm")
-    print("Made by mineek | Some code by m1n1exploit\n")
+    print("Made by mineek | Some code by m1n1exploit | futurerestore fix by WhitetailAni\n")
     main()
